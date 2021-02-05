@@ -7,16 +7,21 @@ import java.util.HashSet;
  */
 public class State {
 
-    private HashSet<Pawn> whitePawns, blackPawns;
+    public HashSet<Pawn> whitePawns, blackPawns, pawns;
 
     public State(int width, int height){
-        whitePawns = new HashSet<Pawn>();
+        whitePawns = new HashSet<Pawn>(); //spurning hvort það þurfi að setja initial capacity to width*2
         blackPawns = new HashSet<Pawn>();
+        pawns = new HashSet<Pawn>(); // er ekki búin að ákveða hvort ég ætla að nota
 
         for (int x = 1; x <= width; x++) {
             for(int y=1; y <= 2; y++ ){
-                whitePawns.add(new Pawn(x,y));
-                blackPawns.add(new Pawn(x,height-y+1));
+                whitePawns.add(new Pawn(x,y,));
+                pawns.add(new Pawn(x,y,"white"));
+
+                blackPawns.add(new Pawn(x,height-y+1,));
+                pawns.add(new Pawn(x,height-y+1,"black"));
+                
             }
         }
     }
