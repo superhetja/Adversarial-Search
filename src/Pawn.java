@@ -3,8 +3,8 @@
  */
 public class Pawn implements Cloneable {
 
-    private int x,y;
-    private String color;
+    public int x,y;
+    public String color;
 
     public Pawn(int x, int y, String color){
         this.x = x;
@@ -35,6 +35,33 @@ public class Pawn implements Cloneable {
 
 	public String toString() {
 		return "(" + x + ", " + y + ")";
-	}
+    }
+    
+    public void moveForward() {
+        if (color.equals("white")){
+            this.y++;
+        } else {
+            this.y--;
+        }
+    }
+
+    public void takeRight(){
+        if (color.equals("white")){
+            this.y++;
+            this.x++;
+        } else {
+            this.y--;
+            this.x--;
+        }
+    }
+    public void takeLeft(){
+        if (color.equals("white")){
+            this.y++;
+            this.x--;
+        } else {
+            this.y--;
+            this.x++;
+        }
+    }
     
 }

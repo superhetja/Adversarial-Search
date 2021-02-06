@@ -1,4 +1,8 @@
 import java.util.Random;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 public class BreakthroughAgent implements Agent{
 
     private Random random = new Random();
@@ -46,7 +50,7 @@ public class BreakthroughAgent implements Agent{
 
 			// Here we just construct a random move (that will most likely not even be possible),
 			// this needs to be replaced with the actual best move.
-            int x1, y1, x2,y2;
+            /*int x1, y1, x2,y2;
             x1 = random.nextInt(width)+1;
 			x2 = x1 + random.nextInt(3)-1;
 			if (role.equals("white")) {
@@ -55,8 +59,22 @@ public class BreakthroughAgent implements Agent{
 			} else {
 				y1 = random.nextInt(height-1)+2;
 				y2 = y1 - 1;
+            }*/
+
+            HashMap<Pawn,Pawn> moves = env.legalMoves(env.getCurrentState());
+            Iterator it = moves.entrySet().iterator();
+            while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            Pawn from = (Pawn)pair.getKey();
+            Pawn to = (Pawn)pair.getValue();
+                return "(move " + from.x + " " + from.y + " " + to.x + " " + to.y + ")";
             }
-            return "(move " + x1 + " " + y1 + " " + x2 + " " + y2 + ")";
+            System.out.println("Out side of the for loop and did not return any value");
+            System.out.println(moves);
+            return "(move " + 2 + " " + 2 + " " + 2 + " " + 3 + ")";
+            
+            //return "(move " + x1 + " " + y1 + " " + x2 + " " + y2 + ")";
+            //return "(move " + x1 + " " + y1 + " " + x2 + " " + y2 + ")";
         } else {
             return "noop";
         }
