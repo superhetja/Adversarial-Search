@@ -47,6 +47,6 @@ public class State implements Cloneable {
     }
     
     public String toString() {
-        return "State{#whitepawns: " + whitePawns.size() + ", #blackpawns: " + blackPawns.size() + "}";
+        return "State{#whitepawns: " + whitePawns.size() + " whitePawns: "+ whitePawns.toString() + "#blackpawns: " + blackPawns.size()  + " blackPawns: "+ blackPawns.toString() +"}";
     }
 }

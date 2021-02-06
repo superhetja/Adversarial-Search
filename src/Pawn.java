@@ -34,7 +34,7 @@ public class Pawn implements Cloneable {
 	}
 
 	public String toString() {
-		return "(" + x + ", " + y + ")";
+		return "Pawn at (" + x + ", " + y + ")";
     }
     
     public void moveForward() {
@@ -46,7 +46,7 @@ public class Pawn implements Cloneable {
     }
 
     public void takeRight(){
-        if (color.equals("white")){
+        if (this.color.equals("white")){
             this.y++;
             this.x++;
         } else {
@@ -55,7 +55,7 @@ public class Pawn implements Cloneable {
         }
     }
     public void takeLeft(){
-        if (color.equals("white")){
+        if (this.color.equals("white")){
             this.y++;
             this.x--;
         } else {

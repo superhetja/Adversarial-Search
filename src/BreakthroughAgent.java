@@ -60,8 +60,10 @@ public class BreakthroughAgent implements Agent{
 				y1 = random.nextInt(height-1)+2;
 				y2 = y1 - 1;
             }*/
-
+            System.out.println("About to do move..");
+            
             HashMap<Pawn,Pawn> moves = env.legalMoves(env.getCurrentState());
+            System.out.println(moves);
             Iterator it = moves.entrySet().iterator();
             while (it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
