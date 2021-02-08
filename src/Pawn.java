@@ -3,6 +3,8 @@
  */
 public class Pawn implements Cloneable {
 
+    //TODO: geyma legal moves í pawn
+
     public int x,y;
     public String color;
 
