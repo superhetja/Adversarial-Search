@@ -8,7 +8,7 @@ import java.util.HashSet;
 public class State implements Cloneable {
 
     public HashSet<Pawn> whitePawns, blackPawns, pawns;
-
+    
     public State() {
         whitePawns = new HashSet<Pawn>();
         blackPawns = new HashSet<Pawn>();
@@ -21,6 +21,7 @@ public class State implements Cloneable {
         blackPawns = new HashSet<Pawn>();
         pawns = new HashSet<Pawn>(); // er ekki búin að ákveða hvort ég ætla að nota
 
+        //TODO: set action list to pawns
         for (int x = 1; x <= width; x++) {
             for(int y=1; y <= 2; y++ ){
                 whitePawns.add(new Pawn(x,y,"white"));

@@ -27,6 +27,7 @@ public class Environment {
         HashMap<Pawn,Pawn> moves = new HashMap<>();
         HashSet<Pawn> white = state.whitePawns;
         HashSet<Pawn> black = state.blackPawns;
+        // TODO: works only for white
         for (Pawn p : white) {
             Pawn right_pawn = (Pawn)p.clone();
             right_pawn.takeRight();
