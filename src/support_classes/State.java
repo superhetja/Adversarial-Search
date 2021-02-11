@@ -1,4 +1,13 @@
+package support_classes;
+import support_classes.position;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
+
+
+import javax.swing.text.Position;
+
+//import jdk.internal.net.http.common.Pair;
 
 
 /**
@@ -8,10 +17,16 @@ import java.util.HashSet;
 public class State implements Cloneable {
 
     public HashSet<Pawn> whitePawns, blackPawns, pawns;
+    public Map<Integer, HashMap<Integer, Pawn>>whiteMap, blackMap;
+    
+
+
     
     public State() {
         whitePawns = new HashSet<Pawn>();
+        whiteMap = new HashMap<Integer, HashMap<Integer, Pawn>>();
         blackPawns = new HashSet<Pawn>();
+        blackMap = new HashMap<Integer, HashMap<Integer, Pawn>>();
         pawns = new HashSet<Pawn>();
     }
 
@@ -20,16 +35,21 @@ public class State implements Cloneable {
         whitePawns = new HashSet<Pawn>(); //spurning hvort það þurfi að setja initial capacity to width*2
         blackPawns = new HashSet<Pawn>();
         pawns = new HashSet<Pawn>(); // er ekki búin að ákveða hvort ég ætla að nota
-
+        Pawn pawn;
         //TODO: set action list to pawns
         for (int x = 1; x <= width; x++) {
             for(int y=1; y <= 2; y++ ){
-                whitePawns.add(new Pawn(x,y,"white"));
-                pawns.add(new Pawn(x,y,"white"));
+                pawn = new Pawn(x,y,"white");
+                whitePawns.add(pawn);
+                whiteMap.put(x, new  HashMap<Integer, Pawn>());
+                whiteMap.get(x).put(y, pawn);
+                pawns.add(pawn);
 
-                blackPawns.add(new Pawn(x,height-y+1,"black"));
-                pawns.add(new Pawn(x,height-y+1,"black"));
-                
+                pawn = new Pawn(x,height-y+1,"black");
+                blackPawns.add(pawn);
+                blackMap.put(x, new  HashMap<Integer, Pawn>());
+                blackMap.get(x).put(height-y+1, pawn);
+                pawns.add(pawn);
             }
         }
         
@@ -41,7 +61,9 @@ public class State implements Cloneable {
         try {
             cloned = (State)super.clone();
             cloned.whitePawns = (HashSet<Pawn>)whitePawns.clone();
+            cloned.whiteMap = (HashMap<Integer, HashMap<Integer, Pawn>>)whiteMap.clone();
             cloned.blackPawns = (HashSet<Pawn>)blackPawns.clone();
+            cloned.blackMap = (HashMap<Integer, HashMap<Integer, Pawn>>)blackMap.clone();
             cloned.pawns = (HashSet<Pawn>)pawns.clone();
         } catch (CloneNotSupportedException e) { e.printStackTrace(); System.exit(-1); cloned=null; }
         return cloned;

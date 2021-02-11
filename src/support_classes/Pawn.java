@@ -1,3 +1,5 @@
+import java.util.HashSet;
+
 /**
  * A Pawn.
  */
@@ -7,17 +9,14 @@ public class Pawn implements Cloneable {
 
     public int x,y;
     public String color;
+    public HashSet<Action> moves;
+    public boolean is_white;
 
     public Pawn(int x, int y, String color){
         this.x = x;
         this.y = y;
         this.color = color;
-
-    }
-    public Pawn(int x, int y){
-        this.x = x;
-        this.y = y;
-
+        is_white = color.equals("white");
     }
 
     public boolean equals(Object o) {

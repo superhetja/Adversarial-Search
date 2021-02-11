@@ -1,5 +1,7 @@
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import support_classes.*;
 /**
  * Creates a board and places pawns down
  */
@@ -23,56 +25,66 @@ public class Environment {
         return this.currentState;
     }
 
-    public HashMap<Pawn,Pawn> legalMoves(State state){
-        HashMap<Pawn,Pawn> moves = new HashMap<>();
-        HashSet<Pawn> white = state.whitePawns;
-        HashSet<Pawn> black = state.blackPawns;
-        // TODO: works only for white
-        for (Pawn p : white) {
-            Pawn right_pawn = (Pawn)p.clone();
-            right_pawn.takeRight();
-            if (black.contains(right_pawn)) { moves.put(p, right_pawn);}
-            Pawn left_pawn = (Pawn)p.clone();
-            left_pawn.takeLeft();
-            if (black.contains(left_pawn)) { moves.put(p, left_pawn);}
-            Pawn forward_pawn = (Pawn)p.clone();
-            forward_pawn.moveForward();
-            if (!white.contains(forward_pawn) && !black.contains(forward_pawn)) {
-                moves.put(p,forward_pawn);
-            }
+    /*
+        returns an iterator for all the legal actions in a state given the next teams moves.
+        Iterator<Action> actions = Environment.legalMoves(state,color);
+        while actions.hasNext()
+        {
+            Action action = actions.next();
+            do something with the action
         }
-        return moves;
+    */
+    public Iterator<Action> legalMoves(State state, boolean color){
+        Iterator<Action> iterrer = new Iterator<Action>(){
+            Iterator<Pawn> pawns = color?state.whitePawns.iterator():state.blackPawns.iterator();
+            
+            Iterator<Action> actions = null;
+
+            public boolean hasNext()
+            {
+                return actions.hasNext() || pawns.hasNext();
+            }
+
+            public Action next()
+            {
+                if (!actions.hasNext())
+                    actions = pawns.next().moves.iterator();
+                return actions.next();
+            }
+        };
+        return iterrer;
     }
 
-    public void updateState(int[] lastMove, String color){
+    public void updateState(Action lastMove, String color){
         System.out.println("Before update: " + this.currentState);
-        this.currentState = getNextState(this.currentState, lastMove, color);
+        this.currentState = getNextState(this.currentState, lastMove);
         System.out.println("After update: " + this.currentState);
     }
 
-    public State getNextState (State state,int[] lastMove, String color) {
+
+    /*
+        return a copy of the given state 
+    */
+    public State getNextState (State state, Action lastMove) {
         State new_state = (State)state.clone();
-        if (color.equals("white")) {
-            new_state.whitePawns.remove(new Pawn(lastMove[0], lastMove[1]));
-            Pawn new_pawn = new Pawn(lastMove[2], lastMove[3], "white");
-            new_state.whitePawns.add(new_pawn);
-            if(new_state.blackPawns.contains(new_pawn)){
-                new_state.blackPawns.remove(new_pawn);
+        boolean color = state.whiteMap.containsKey(lastMove.x1);
+        if (color)
+            color = color && state.whiteMap.get(lastMove.x1).containsKey(lastMove.y1);
+        if (!color)//it's not white, let's check if it's black (just to be safe)
+        {
+            if (!state.blackMap.containsKey(lastMove.x1)){
+                //throw Exception //was not a legal move.
             }
-            
-        }else {
-            new_state.blackPawns.remove(new Pawn(lastMove[0], lastMove[1]));
-            new_state.blackPawns.add(new Pawn(lastMove[2], lastMove[3]));
-            Pawn new_pawn = new Pawn(lastMove[2], lastMove[3],"black");
-            if(new_state.whitePawns.contains(new_pawn)){
-                new_state.whitePawns.remove(new_pawn);
+            if (!state.blackMap.get(lastMove.x1).containsKey(lastMove.y1)){
+                //throw Exception //was not a legal move.
             }
-
         }
-        return new_state;
-        //currentState.pawns.remove(new Pawn(lastMove[0], lastMove[1], color));
-        //currentState.pawns.add(new Pawn(lastMove[2], lastMove[3],color));
-    }
 
-    
+        new_state.whitePawns.remove(new Pawn(lastMove.x1, lastMove.y1));
+        Pawn new_pawn = new Pawn(lastMove.x2, lastMove.y2, "white");
+        new_state.whitePawns.add(new_pawn);
+        if(new_state.blackPawns.contains(new_pawn)){
+            new_state.blackPawns.remove(new_pawn);
+        }
+    }
 }

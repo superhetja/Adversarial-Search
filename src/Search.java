@@ -1,4 +1,8 @@
-public class Search {
+import support_classes.*;
+
+public interface Search {
+    //public void init(Environment env, Heuristic heuristic, Pruning pruning);
+    public Action doSearch(State state, boolean color);
 /*    Environment env;
     String color;
 
