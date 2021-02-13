@@ -17,6 +17,10 @@ public class MinMax implements Search{
         this.her = heuristic;
         this.pruning = pruning;
     }*/
+    public boolean isTerminal(State s)
+    {
+        return false;
+    }
 
     //isTerminal has options: local function, Environment function, state function.
 
@@ -26,11 +30,12 @@ public class MinMax implements Search{
         if (!color)
             score = ~score;
         Action action;
-        Action best;
+        Action best = null;
         int ret;
         int depth = 2;
         Iterator<Action> actions;
-        if (isTerminal(state))
+        if (isTerminal(state))//state.is_terminal();  env.is_termialn(state) local is_termal(state), herusic.is_termal(state)
+        //state.get_next(action)→ state
             return null;
         try{
             while (true)
@@ -57,6 +62,10 @@ public class MinMax implements Search{
 
     private int rec_search(State state, int depth, boolean color)
     {
+        /*
+        if(checkfor_timeup(fjdkslaj))
+            throw;
+        */
         if((depth == 0) || isTerminal(state))
         {
             return her.eval(state);

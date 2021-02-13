@@ -12,13 +12,19 @@ public class AlphaBeta implements Search{
         this.env = env;
         this.heuristic = heuristic;
     }
+    
+    public boolean isTerminal(State s)
+    {
+        return false;
+    }
+
     public Action doSearch(State state, boolean color)
     {
         int score = 1<<31;//negative infinity
         if (!color)
             score = ~score;
         Action action;
-        Action best;
+        Action best = null;
         int ret;
         int depth = 2;
         Iterator<Action> actions;

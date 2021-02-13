@@ -11,8 +11,17 @@ public class BreakthroughAgent implements Agent{
     private String role; // the name of this agent's role (white or black)
     private int playclock; // this is how much time (in seconds) we have before nextAction needs to return a move
     private boolean myTurn; // whether it is this agent's turn or not
+    private boolean color;
     private int width, height; // dimensions of the board
     private Environment env; //our game environment
+
+    private Search searching = new MinMax(env, new Heuristic(){
+        public void init(Environment e){};
+        public int eval(State s)
+        {
+            return 1;
+        }
+    });
 
     /*
 		init(String role, int playclock) is called once before you have to select the first action. Use it to initialize the agent. role is either "white" or "black" and playclock is the number of seconds after which nextAction must return.
@@ -21,6 +30,7 @@ public class BreakthroughAgent implements Agent{
         this.role = role;
         this.playclock = playclock;
         myTurn = !role.equals("white"); // myTurn is change before getting nextMove.
+        color = role.equals("white");
         this.width = width;
         this.height = height;
         // TODO: add your own initialization code here
@@ -30,7 +40,11 @@ public class BreakthroughAgent implements Agent{
     // lastMove is null the first time nextAction gets called (in the initial state)
     // otherwise it contains the coordinates x1,y1,x2,y2 of the move that the last player did
     public String nextAction(int[] lastMove) {
-        if(lastMove != null) {
+        Action lastAction = new Action(lastMove);
+        env.updateState(lastAction);
+        return searching.doSearch(env.getCurrentState(), color).toString();
+
+        /*if(lastMove != null) {
             int x1 = lastMove[0], y1 = lastMove[1], x2 = lastMove[2], y2 = lastMove[3];
             String roleOfLastPlayer;
             if (myTurn && role.equals("white") || !myTurn && role.equals("black")) {
@@ -39,7 +53,7 @@ public class BreakthroughAgent implements Agent{
                 roleOfLastPlayer = "black";
             }
             // TODO: 1. update your internal world model according to the action that was just executed
-            env.updateState(lastMove, roleOfLastPlayer);
+            env.updateState(new Action(lastMove), roleOfLastPlayer);
             System.out.println(roleOfLastPlayer + " moved from " + x1 + ", " + y1 + " to " + x2 + ", " + y2);
             
         }
@@ -51,7 +65,7 @@ public class BreakthroughAgent implements Agent{
 
 			// Here we just construct a random move (that will most likely not even be possible),
 			// this needs to be replaced with the actual best move.
-            /*int x1, y1, x2,y2;
+            int x1, y1, x2,y2;
             x1 = random.nextInt(width)+1;
 			x2 = x1 + random.nextInt(3)-1;
 			if (role.equals("white")) {
@@ -60,7 +74,7 @@ public class BreakthroughAgent implements Agent{
 			} else {
 				y1 = random.nextInt(height-1)+2;
 				y2 = y1 - 1;
-            }*/
+            }
             System.out.println("About to do move..");
             
             HashMap<Pawn,Pawn> moves = env.legalMoves(env.getCurrentState());
@@ -80,7 +94,7 @@ public class BreakthroughAgent implements Agent{
             //return "(move " + x1 + " " + y1 + " " + x2 + " " + y2 + ")";
         } else {
             return "noop";
-        }
+        }*/
     }
 
 	// is called when the game is over or the match is aborted

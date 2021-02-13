@@ -55,7 +55,7 @@ public class Environment {
         return iterrer;
     }
 
-    public void updateState(Action lastMove, String color){
+    public void updateState(Action lastMove){
         System.out.println("Before update: " + this.currentState);
         this.currentState = getNextState(this.currentState, lastMove);
         System.out.println("After update: " + this.currentState);
@@ -66,7 +66,8 @@ public class Environment {
         return a copy of the given state 
     */
     public State getNextState (State state, Action lastMove) {
-        State new_state = (State)state.clone();
+        return state;
+        /*State new_state = (State)state.clone();
         boolean color = state.whiteMap.containsKey(lastMove.x1);
         if (color)
             color = color && state.whiteMap.get(lastMove.x1).containsKey(lastMove.y1);
@@ -85,6 +86,6 @@ public class Environment {
         new_state.whitePawns.add(new_pawn);
         if(new_state.blackPawns.contains(new_pawn)){
             new_state.blackPawns.remove(new_pawn);
-        }
+        }*/
     }
 }
