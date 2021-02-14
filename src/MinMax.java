@@ -60,7 +60,7 @@ public class MinMax implements Search{
         if(checkfor_timeup(fjdkslaj))
             throw;
         */
-        if((depth == 0) || isTerminal(state))
+        if((depth == 0) || env.isTerminalState(state))
         {
             return her.eval(state);
         }
