@@ -3,9 +3,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
 
-
-import javax.swing.text.Position;
-
 //import jdk.internal.net.http.common.Pair;
 
 
@@ -16,7 +13,7 @@ import javax.swing.text.Position;
 public class State implements Cloneable {
 
     public HashSet<Pawn> whitePawns, blackPawns, pawns;
-    public Map<Integer, HashMap<Integer, Pawn>>whiteMap, blackMap;//map.get(x).get(y) -> pawn.  
+    public Map<Integer, HashMap<Integer, Pawn>>whiteMap, blackMap;//map.get(x).get(y) -> pawn.
     
     public State() {
         whitePawns = new HashSet<Pawn>();
@@ -34,6 +31,7 @@ public class State implements Cloneable {
         blackMap = new HashMap<Integer, HashMap<Integer, Pawn>>();
         pawns = new HashSet<Pawn>(); // er ekki búin að ákveða hvort ég ætla að nota
         Pawn pawn;
+
         //TODO: set action list to pawns
         for (int x = 1; x <= width; x++) {
             for(int y=1; y <= 2; y++ ){
@@ -106,5 +104,9 @@ public class State implements Cloneable {
     
     public String toString() {
         return "State{#whitepawns: " + whitePawns.size() + " whitePawns: "+ whitePawns.toString() + "#blackpawns: " + blackPawns.size()  + " blackPawns: "+ blackPawns.toString() +"}";
+    }
+    public static void main(String[] args){
+        var someState= new State(4,4);
+        System.out.println(someState);
     }
 }

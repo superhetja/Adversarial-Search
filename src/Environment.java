@@ -42,13 +42,20 @@ public class Environment {
 
             public boolean hasNext()
             {
-                return actions.hasNext() || pawns.hasNext();
+                return pawns.hasNext() || actions.hasNext();
             }
 
             public Action next()
             {
-                if (!actions.hasNext())
+                System.out.println(actions);
+                if (actions == null){
+                    System.out.println("actions null");
+                    actions = pawns.next().moves.iterator();}
+                if (!actions.hasNext()){
+                    System.out.println("actions don't have next");
                     actions = pawns.next().moves.iterator();
+                }
+                System.out.println(actions);
                 return actions.next();
             }
         };
@@ -87,5 +94,15 @@ public class Environment {
         if(new_state.blackPawns.contains(new_pawn)){
             new_state.blackPawns.remove(new_pawn);
         }*/
+    }
+    public static void main(String[] args){
+        var env = new Environment(4,4);
+        System.out.println(env.currentState);
+        Iterator<Action> actions = env.legalMoves(env.currentState,true);
+        while (actions.hasNext())
+        {
+            Action action = actions.next();
+            System.out.println(action);
+        }
     }
 }

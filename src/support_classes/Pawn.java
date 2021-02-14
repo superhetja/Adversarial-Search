@@ -19,6 +19,7 @@ public class Pawn implements Cloneable {
         this.y = y;
         this.color = color;
         is_white = color.equals("white");
+        this.moves = new HashSet<Action>();
     }
 
     public boolean equals(Object o) {
@@ -66,5 +67,14 @@ public class Pawn implements Cloneable {
             this.x++;
         }
     }
-    
+
+    public static void main(String[] args){
+        var myPawn = new Pawn(1,3,"white");
+        System.out.println(myPawn);
+        myPawn.takeLeft();
+        myPawn.moveForward();
+        var pawnClone = myPawn.clone();
+        System.out.println(pawnClone.equals(myPawn));
+    }
+
 }

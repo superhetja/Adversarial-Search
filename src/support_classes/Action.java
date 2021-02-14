@@ -14,4 +14,10 @@ public class Action {
     }
     public int[] start(){return new int[]{x1,y1};}
     public int[] end(){return new int[]{x2,y2};}
+
+    public String toString()
+    {
+        return "(move " + x1 + " " + y1 + " " + x2 + " " + y2 + ")";
+    }
+
 }
