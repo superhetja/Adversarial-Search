@@ -92,6 +92,29 @@ public class State implements Cloneable {
         }
         
     }
+
+    public boolean checkWhite(int x, int y)
+    {
+        if (!whiteMap.containsKey(x))
+            return false;
+        return whiteMap.get(x).containsKey(y);
+    }
+
+    public boolean checkBlack(int x, int y)
+    {
+        if (!blackMap.containsKey(x))
+            return false;
+        return blackMap.get(x).containsKey(y);
+    }
+
+    public Pawn getPawn(int x, int y)
+    {
+        if (checkWhite(x, y))
+            return whiteMap.get(x).get(y);
+        else if (checkBlack(x, y))
+            return blackMap.get(x).get(y);
+        else return null;
+    }
     
     @SuppressWarnings("unchecked") 
     public State clone(){
