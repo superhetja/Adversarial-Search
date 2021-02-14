@@ -18,8 +18,9 @@ public class MinMax implements Search{
         this.pruning = pruning;
     }*/
     public boolean isTerminal(State s)
-    {
-        return false;
+    {   
+        int tmp = this.her.eval(s);
+        return tmp==0? true: tmp==100? true: tmp==-100? true: false;
     }
 
     //isTerminal has options: local function, Environment function, state function.
