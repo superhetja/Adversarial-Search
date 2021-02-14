@@ -17,8 +17,11 @@ public class Environment {
     public Environment(int width, int height){
         this.width = width;
         this.height = height;
-        this.currentState = new State(width, height);
+        this.currentState = new State(this.width, this.height);
 
+    }
+    public int getHeigth() {
+        return this.height;
     }
 
     public State getCurrentState(){
