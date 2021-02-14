@@ -76,6 +76,33 @@ public class Pawn implements Cloneable {
             this.x++;
         }
     }
+    public void updateLeagalMoves(State s){
+        HashSet<Action> tmp_moves = new HashSet<Action>();
+        if (is_white) {
+            if (!s.blackPawns.contains(new Pawn(x, y+1, "black"))){
+                // move forvard
+                tmp_moves.add(new Action(x, y, x, y+1));
+            } else if (s.blackPawns.contains(new Pawn(x+1, y+1, "black"))){
+                // take right
+                tmp_moves.add(new Action(x, y, x+1, y+1));
+            } else if (s.blackPawns.contains(new Pawn(x-1, y+1, "black"))){
+                // take left
+                tmp_moves.add(new Action(x, y, x-1, y+1));
+            }
+        } else {
+            if (!s.whitePawns.contains(new Pawn(x, y-1, "white"))){
+                // move forvard
+                tmp_moves.add(new Action(x, y, x, y-1));
+            } else if (s.whitePawns.contains(new Pawn(x+1, y-1, "white"))){
+                // take right
+                tmp_moves.add(new Action(x, y, x+1, y-1));
+            } else if (s.whitePawns.contains(new Pawn(x-1, y-1, "white"))){
+                // take left
+                tmp_moves.add(new Action(x, y, x-1, y-1));
+            }
+        }
+        this.moves= tmp_moves;
+    }
 
     public static void main(String[] args){
         var myPawn = new Pawn(1,3,"white");
