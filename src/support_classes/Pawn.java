@@ -22,6 +22,15 @@ public class Pawn implements Cloneable {
         this.moves = new HashSet<Action>();
     }
 
+    public Pawn(int x, int y, boolean is_white)
+    {
+        this.x = x;
+        this.y = y;
+        this.is_white = is_white;
+        this.color = is_white?"white":"black";
+        this.moves = new HashSet<Action>();
+    }
+
     public boolean equals(Object o) {
 		Pawn p = (Pawn)o;
 		return p.x == x && p.y == y;

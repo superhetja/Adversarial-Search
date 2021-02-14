@@ -2,6 +2,7 @@ package support_classes;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
 
 //import jdk.internal.net.http.common.Pair;
 
@@ -29,7 +30,7 @@ public class State implements Cloneable {
         whiteMap = new HashMap<Integer, HashMap<Integer, Pawn>>();
         blackPawns = new HashSet<Pawn>();
         blackMap = new HashMap<Integer, HashMap<Integer, Pawn>>();
-        pawns = new HashSet<Pawn>(); // er ekki búin að ákveða hvort ég ætla að nota
+        this.pawns = new HashSet<Pawn>(); // er ekki búin að ákveða hvort ég ætla að nota
         Pawn pawn;
 
         //TODO: set action list to pawns
@@ -55,9 +56,10 @@ public class State implements Cloneable {
                     }
                 }
                 whitePawns.add(pawn);
-                whiteMap.put(x, new  HashMap<Integer, Pawn>());//for ever x hashmap for y.  {x: {}}
+                if(!whiteMap.containsKey(x))
+                    whiteMap.put(x, new  HashMap<Integer, Pawn>());//for ever x hashmap for y.  {x: {}}
                 whiteMap.get(x).put(y, pawn);                                             //{x: {y:pawn}}
-                pawns.add(pawn);
+                this.pawns.add(pawn);
 
                 pawn = new Pawn(x,height-y+1,"black");
                 if(y==2)
@@ -79,9 +81,10 @@ public class State implements Cloneable {
                     }
                 }
                 blackPawns.add(pawn);
-                blackMap.put(x, new  HashMap<Integer, Pawn>());
+                if (!blackMap.containsKey(x))
+                    blackMap.put(x, new  HashMap<Integer, Pawn>());
                 blackMap.get(x).put(height-y+1, pawn);
-                pawns.add(pawn);
+                this.pawns.add(pawn);
                 
             }
         }
@@ -90,23 +93,44 @@ public class State implements Cloneable {
     
     @SuppressWarnings("unchecked") 
     public State clone(){
-        State cloned;
-        try {
-            cloned = (State)super.clone();
-            cloned.whitePawns = (HashSet<Pawn>)whitePawns.clone();
-            //cloned.whiteMap = (HashMap<Integer, HashMap<Integer, Pawn>>)whiteMap.clone();
-            cloned.blackPawns = (HashSet<Pawn>)blackPawns.clone();
-            //cloned.blackMap = (HashMap<Integer, HashMap<Integer, Pawn>>)blackMap.clone();
-            cloned.pawns = (HashSet<Pawn>)pawns.clone();
-        } catch (CloneNotSupportedException e) { e.printStackTrace(); System.exit(-1); cloned=null; }
+        State cloned = new State();
+        Iterator<Pawn> ps = this.pawns.iterator();
+        Pawn p;
+        while (ps.hasNext())
+        {
+            p= ps.next();
+            p = new Pawn(p.x,p.y,p.is_white);
+            cloned.pawns.add(p);
+            if(p.is_white)
+            {
+                cloned.whitePawns.add(p);
+                if(!cloned.whiteMap.containsKey(p.x))
+                    cloned.whiteMap.put(p.x, new HashMap<Integer, Pawn>());
+                cloned.whiteMap.get(p.x).put(p.y,p);
+            }
+            else
+            {
+                cloned.blackPawns.add(p);
+                if(!cloned.blackMap.containsKey(p.x))
+                    cloned.blackMap.put(p.x, new HashMap<Integer, Pawn>());
+                cloned.blackMap.get(p.x).put(p.y,p);
+            }
+            
+        }
         return cloned;
     }
     
     public String toString() {
-        return "State{#whitepawns: " + whitePawns.size() + " whitePawns: "+ whitePawns.toString() + "#blackpawns: " + blackPawns.size()  + " blackPawns: "+ blackPawns.toString() +"}";
+        return "State{#whitepawns: " + whitePawns.size() + " whitePawns: "+ whitePawns.toString() + "#blackpawns: " + blackPawns.size()  + " blackPawns: "+ blackPawns.toString() + " whitemap: "+ whiteMap.toString()+" blackMap: "+blackMap.toString()+"}";
     }
     public static void main(String[] args){
-        var someState= new State(4,4);
+        var someState= new State(5,5);
         System.out.println(someState);
+
+        State other = someState.clone();
+        other.blackMap.get(2).get(5).y=-1;
+        System.out.println(someState);
+        System.out.println(other);
+        System.out.println(other.equals(someState));
     }
 }
