@@ -20,6 +20,9 @@ public class Environment {
         this.currentState = new State(width, height);
 
     }
+    public int getHeigth() {
+        return this.height;
+    }
 
     public State getCurrentState(){
         return this.currentState;

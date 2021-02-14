@@ -15,7 +15,7 @@ public class BreakthroughAgent implements Agent{
     private int width, height; // dimensions of the board
     private Environment env; //our game environment
 
-    private Search searching = new MinMax(env, new Heuristic(){
+    private Search searching = new MinMax(env, new SimpleHeuristics(){
         public void init(Environment e){};
         public int eval(State s)
         {

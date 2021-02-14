@@ -15,6 +15,7 @@ public class State implements Cloneable {
 
     public HashSet<Pawn> whitePawns, blackPawns, pawns;
     public Map<Integer, HashMap<Integer, Pawn>>whiteMap, blackMap;//map.get(x).get(y) -> pawn.
+    public boolean whites_turn; // How's turn is it?
     
     public State() {
         whitePawns = new HashSet<Pawn>();
@@ -22,6 +23,7 @@ public class State implements Cloneable {
         blackPawns = new HashSet<Pawn>();
         blackMap = new HashMap<Integer, HashMap<Integer, Pawn>>();
         pawns = new HashSet<Pawn>();
+
     }
 
 

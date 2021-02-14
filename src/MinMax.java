@@ -18,8 +18,10 @@ public class MinMax implements Search{
         this.pruning = pruning;
     }*/
     public boolean isTerminal(State s)
-    {
-        return false;
+    {   
+        // TODO: Dose not cheack for tie
+        int tmp = this.her.eval(s);
+        return tmp==100? true: tmp==-100? true: false;
     }
 
     //isTerminal has options: local function, Environment function, state function.
