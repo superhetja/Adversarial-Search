@@ -19,8 +19,9 @@ public class MinMax implements Search{
     }*/
     public boolean isTerminal(State s)
     {   
+        // TODO: Dose not cheack for tie
         int tmp = this.her.eval(s);
-        return tmp==0? true: tmp==100? true: tmp==-100? true: false;
+        return tmp==100? true: tmp==-100? true: false;
     }
 
     //isTerminal has options: local function, Environment function, state function.
