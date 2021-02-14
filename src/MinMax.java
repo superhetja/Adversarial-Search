@@ -17,13 +17,32 @@ public class MinMax implements Search{
         this.her = heuristic;
         this.pruning = pruning;
     }*/
-    public boolean isTerminal(State s)
-    {   
-        // TODO: Dose not cheack for tie
-        int tmp = this.her.eval(s);
-        return tmp==100? true: tmp==-100? true: false;
+    public boolean isTerminal(State state) {   
+        Iterator<Pawn> white_pawns = state.whitePawns.iterator();
+        Iterator<Pawn> black_pawns = state.blackPawns.iterator();
+        Pawn tmpPawn;
+        boolean tie=true; // Tie if whos turn it is has nolegal moves
+        
+        while(white_pawns.hasNext()){
+            tmpPawn = white_pawns.next();
+            if (tmpPawn.y==this.env.getHeigth()){
+                return true; // White won
+            }
+            if (state.whites_turn){ // If it's your turn and you have leagal move its not a tie
+                tie = tmpPawn.moves.size()!= 0? false: tie;
+            }
+        }
+        while(black_pawns.hasNext()){
+            tmpPawn = black_pawns.next();
+            if (tmpPawn.y==1){
+                return true; // black won
+            }
+            if (!state.whites_turn){ // If it's your turn and you have leagal move it's not a tie
+                tie = tmpPawn.moves.size()!= 0? false: tie;
+            }
+        }
+        return tie;
     }
-
     //isTerminal has options: local function, Environment function, state function.
 
     public Action doSearch(State state, boolean color)
