@@ -115,6 +115,27 @@ public class State implements Cloneable {
             return blackMap.get(x).get(y);
         else return null;
     }
+
+    public void delete_pawn(Pawn p)
+    {
+        if(p == null)
+            return;
+        if(p.is_white)
+        {
+            whitePawns.remove(p);
+            whiteMap.get(p.x).remove(p.y);
+        }
+        else
+        {
+            blackPawns.remove(p);
+            blackMap.get(p.x).remove(p.y);
+        }
+    }
+
+    public void delete_pawn(int x, int y)
+    {
+        delete_pawn(getPawn(x, y));
+    }
     
     @SuppressWarnings("unchecked") 
     public State clone(){

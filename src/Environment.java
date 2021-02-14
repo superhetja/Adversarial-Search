@@ -73,6 +73,8 @@ public class Environment {
         return a copy of the given state 
     */
     public State getNextState (State state, Action lastMove) {
+        
+
         // executes action on clone state (gives what if)
         // given state and an Action x1, y1, x2, y2
         /*  3 things need to happen:
@@ -81,15 +83,15 @@ public class Environment {
             *every pawn in affected coordinates must have their actions updated
         */
         State newState = (State)state.clone();
-        boolean color = state.whiteMap.containsKey(lastMove.x1);  // lastMove type Action
-
-        if (color){ // Is the player white? ++
-            // next, we verify pawn in selected square belongs to current player
-            color = color && state.whiteMap.get(lastMove.x1).containsKey(lastMove.y1); // nested dictionaries, riiiiight
-            
+        Pawn p = state.getPawn(lastMove.x1, lastMove.y1); // getting current pawn
+        boolean color = p.is_white;  // lastMove type Action
+        if(lastMove.x1!=lastMove.x2)//killer move
+        {
+            newState.delete_pawn(lastMove.x2, lastMove.y2);
+        }
+        if (color){ // Is the player white?
             // check move legality, for white: current move >= lastmove (but xy1 != xy2 because that's not a move at all)
-            Pawn currentPawn = (Pawn)state.whiteMap.get(lastMove.x1).get(lastMove.y1);  // getting current pawn
-
+            
             // if move is forward, invalid if any pawn in the way.
             if ((currentPawn.x == lastMove.x2)&&(currentPawn.y + 1 == lastMove.y2)){
                 Pawn otherPawn = (Pawn)state.blackMap.get(lastMove.x2).get(lastMove.y2);
