@@ -1,6 +1,9 @@
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Arrays;
+
 import support_classes.*;
 /**
  * Creates a board and places pawns down
@@ -134,33 +137,19 @@ public class Environment {
                     currentPawn.updateLeagalMoves(state);
                     newState.whitePawns.add(currentPawn);
 
-                    // update the pawns affected by this action
+                    // update the white pawns affected by this action
+                    List<Integer> list_x=Arrays.asList(-1,0,1,-1,1);
+                    List<Integer> list_y=Arrays.asList(-1,-1,-1,0,0);
                     Pawn cpawn;
-                    if (state.checkWhite(lastMove.x1-1, lastMove.y1-1)) {
-                        cpawn= newState.getPawn(lastMove.x1-1, lastMove.y1-1);
-                        cpawn.updateLeagalMoves(state);
-                        newState.whitePawns.add(cpawn);
+                    for (int i =0; i<5;i++){
+                        if (state.checkWhite(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i))) {
+                            cpawn= newState.getPawn(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i));
+                            cpawn.updateLeagalMoves(state);
+                            newState.whitePawns.add(cpawn);
+                        }
                     }
-                    if (state.checkWhite(lastMove.x1, lastMove.y1-1)) {
-                        cpawn= newState.getPawn(lastMove.x1, lastMove.y1-1);
-                        cpawn.updateLeagalMoves(state);
-                        newState.whitePawns.add(cpawn);
-                    }
-                    if (state.checkWhite(lastMove.x1+1, lastMove.y1-1)) {
-                        cpawn= newState.getPawn(lastMove.x1+1, lastMove.y1-1);
-                        cpawn.updateLeagalMoves(state);
-                        newState.whitePawns.add(cpawn);
-                    }
-                    if (state.checkWhite(lastMove.x1-1, lastMove.y1)) {
-                        cpawn= newState.getPawn(lastMove.x1-1, lastMove.y1);
-                        cpawn.updateLeagalMoves(state);
-                        newState.whitePawns.add(cpawn);
-                    }
-                    if (state.checkWhite(lastMove.x1+1, lastMove.y1)) {
-                        cpawn= newState.getPawn(lastMove.x1+1, lastMove.y1);
-                        cpawn.updateLeagalMoves(state);
-                        newState.whitePawns.add(cpawn);
-                    }
+                    
+                    // TODO: update the black pawns affected by this action
 
                     
 
