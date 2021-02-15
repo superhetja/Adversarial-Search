@@ -70,16 +70,16 @@ public class State implements Cloneable {
                     {
                         if(x<width)
                         {
-                            pawn.moves.add(new Action(x,y,x+1,height-y));
+                            pawn.moves.add(new Action(x,height-y+1,x+1,height-y));
                         }
                         if(x>1)
                         {
-                            pawn.moves.add(new Action(x,y,x-1,height-y));
+                            pawn.moves.add(new Action(x,height-y+1,x-1,height-y));
                         }
                     }
                     else //forward actiosn
                     {
-                        pawn.moves.add(new Action(x,y,x,height-y));
+                        pawn.moves.add(new Action(x,height-y+1,x,height-y));
                     }
                 }
                 blackPawns.add(pawn);
