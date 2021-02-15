@@ -234,37 +234,13 @@ public class Environment {
             }
 
             
-    }       
+        } else { // player is black
 
-        /*
-       
-
-
-        if (color) // white player
-            color = color && state.whiteMap.get(lastMove.x1).containsKey(lastMove.y1); // nested dictionaries, riiiiight
-            system.out.println(color);
-            // we want to know if the pawn in this square belongs to the current player.
-
-        else if (!color) //it's not white, let's check if it's black (just to be safe)
-        {
-            if (!state.blackMap.containsKey(lastMove.x1)){
-                //throw Exception //was not a legal move.  
-            }
-            if (!state.blackMap.get(lastMove.x1).containsKey(lastMove.y1)){
-                //throw Exception //was not a legal move.
-            }
-        }
-
-        new_state.whitePawns.remove(new Pawn(lastMove.x1, lastMove.y1));
-        Pawn new_pawn = new Pawn(lastMove.x2, lastMove.y2, "white");
-        new_state.whitePawns.add(new_pawn);
-        if(new_state.blackPawns.contains(new_pawn)){
-            new_state.blackPawns.remove(new_pawn);
-        }*/
+        }  
         return newState;
     }
     public static void main(String[] args){
-        var env = new Environment(5,5);
+        var env = new Environment(4,4);
         //System.out.println(env.currentState);
         /*
         Iterator<Action> actions = env.legalMoves(env.currentState,true);
@@ -274,7 +250,7 @@ public class Environment {
             System.out.println(action);
         }*/
         // TESTING FUNCTION getNextState(state, action);
-        Action myAction = new Action(1,2,1,3); // should eat pawn
+        Action myAction = new Action(1,2,2,3); // should eat pawn
         env.updateState(myAction);
 
         //System.out.println(nextState);
