@@ -47,7 +47,7 @@ public class Pawn implements Cloneable {
 	}
 
 	public String toString() {
-		return "Pawn at (" + x + ", " + y + ")";
+		return "Pawn at (" + x + ", " + y + ")"+moves;
     }
     
     public void moveForward() {
@@ -80,8 +80,10 @@ public class Pawn implements Cloneable {
         HashSet<Action> tmp_moves = new HashSet<Action>();
         if (is_white) {
             if (!s.blackPawns.contains(new Pawn(x, y+1, "black"))){
-                // move forvard
-                tmp_moves.add(new Action(x, y, x, y+1));
+                if (!s.whitePawns.contains(new Pawn(x, y+1, "white"))){
+                    // move forvard
+                    tmp_moves.add(new Action(x, y, x, y+1));
+                }
             } else if (s.blackPawns.contains(new Pawn(x+1, y+1, "black"))){
                 // take right
                 tmp_moves.add(new Action(x, y, x+1, y+1));
