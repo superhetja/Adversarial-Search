@@ -48,20 +48,15 @@ public class Environment {
 
             public boolean hasNext()
             {
-                return pawns.hasNext() || actions.hasNext();
+                while (!actions.hasNext()&&pawns.hasNext())
+                {
+                    actions = pawns.next().moves.iterator();
+                }
+                return actions.hasNext();
             }
 
             public Action next()
             {
-                System.out.println(actions);
-                if (actions == null){
-                    System.out.println("actions null");
-                    actions = pawns.next().moves.iterator();}
-                if (!actions.hasNext()){
-                    System.out.println("actions don't have next");
-                    actions = pawns.next().moves.iterator();
-                }
-                System.out.println(actions);
                 return actions.next();
             }
         };

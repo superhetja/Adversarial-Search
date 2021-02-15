@@ -16,6 +16,7 @@ public class MinMax implements Search{
     {
         this.env = env;
         this.her = heuristic;
+        her.init(env);
         this.max_time = max_time;
     }
     /*
@@ -42,10 +43,14 @@ public class MinMax implements Search{
             while (true)
             {
                 actions = env.legalMoves(state, color);
+                System.out.println("is it true? "+actions.hasNext());
                 while (actions.hasNext())
                 {
+                    System.out.println("here");
                     action = actions.next();
+                    System.out.println("Do this: " +action);
                     ret = rec_search(env.getNextState(state, action), depth-1, false, !color);
+                    System.out.println("scored: "+ret);
                     if (ret>score)
                     {
                         best = action;
@@ -63,7 +68,7 @@ public class MinMax implements Search{
 
     private int rec_search(State state, int depth, boolean maximizing, boolean color)
     {
-        
+        System.out.println(clock.getTime()-starting);
         if(clock.getTime()-starting+time_padding>max_time)
             throw new RunTimeException();
         
@@ -75,6 +80,7 @@ public class MinMax implements Search{
         int best = maximizing?~(1<<31):1<<31;//best or worst for minimizing
         Action action;
         Iterator<Action> actions = env.legalMoves(state, color);
+        System.out.println(actions.hasNext());
         while (actions.hasNext())
         {
             action = actions.next();
@@ -92,5 +98,13 @@ public class MinMax implements Search{
             num=num>>1;
         }
         return ret;
+    }
+
+    public static void main(String[] args){
+        Environment env = new Environment(4, 4);
+        Search s = new MinMax(env, new SimpleHeuristics(), 5000);
+        Action ret = s.doSearch(env.getCurrentState(),true);
+        System.out.println("this thing: "+ret);
+
     }
 }
