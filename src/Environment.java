@@ -362,6 +362,8 @@ public class Environment {
         // TESTING FUNCTION getNextState(state, action);
         Action myAction = new Action(1,2,2,3); // should eat pawn
         env.updateState(myAction);
+        myAction= new Action(1, 4, 2, 3);
+        env.updateState(myAction);
 
         //System.out.println(nextState);
 
