@@ -5,7 +5,7 @@ public class MinMax implements Search{
     Environment env;
     Heuristic her;
     Pruning pruning;
-    public MinMax(Environment env, Heuristic heuristic)
+    public MinMax(Environment env, Heuristic heuristic, int max_time)
     {
         this.env = env;
         this.her = heuristic;
@@ -46,7 +46,7 @@ public class MinMax implements Search{
                 depth++;
             }
         }
-        catch(Exception e)
+        catch(RuntimeException e)
         {
             return best;
         }
@@ -56,7 +56,7 @@ public class MinMax implements Search{
     {
         /*
         if(checkfor_timeup(fjdkslaj))
-            throw;
+            throw new RunTimeException();
         */
         if((depth == 0) || env.isTerminalState(state))
         {
@@ -72,6 +72,15 @@ public class MinMax implements Search{
             ret = rec_search(env.getNextState(state, action), depth-1, !maximizing, !color);
             if((ret<best) ^ maximizing)
                 best = ret;
+        }
+        return ret;
+    }
+    private int fastlog_2(int num)
+    {
+        int ret = 0;
+        while (num>1)
+        {
+            num=num>>1;
         }
         return ret;
     }
