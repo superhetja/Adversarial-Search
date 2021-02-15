@@ -238,7 +238,7 @@ public class Environment {
             // Delete the old paw
             newState.delete_pawn(currentPawn);
             // if move is forward, invalid if any pawn in the way.
-            if ((currentPawn.x == lastMove.x2)&&(currentPawn.y + 1 == lastMove.y2)){
+            if ((currentPawn.x == lastMove.x2)&&(currentPawn.y - 1 == lastMove.y2)){
                 Pawn otherPawn = state.getPawn(lastMove.x2, lastMove.y2);
 
                 if (otherPawn == null){
@@ -268,6 +268,7 @@ public class Environment {
                         if (state.checkWhite(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i))) {
                             cpawn= newState.getPawn(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i));
                             cpawn.updateLeagalMoves(state);
+                            System.out.println(cpawn.toString());
                             newState.whitePawns.add(cpawn);
                         }
                     }
@@ -277,7 +278,7 @@ public class Environment {
                 // out here, otherPawn/whitePawn != null, move is invalid.
             }
             // else if move is diagonal RIGHT, require a BLACK pawn
-            else if ((currentPawn.x + 1 == lastMove.x2) && (currentPawn.y + 1 == lastMove.y2)){
+            else if ((currentPawn.x + 1 == lastMove.x2) && (currentPawn.y - 1 == lastMove.y2)){
                 System.out.println("diagonal RIGHT");
                 Pawn otherPawn = (Pawn)state.blackMap.get(lastMove.x2).get(lastMove.y2);
                 System.out.println("Is there a pawn? " + otherPawn);
@@ -360,9 +361,7 @@ public class Environment {
             System.out.println(action);
         }*/
         // TESTING FUNCTION getNextState(state, action);
-        Action myAction = new Action(1,2,2,3); // should eat pawn
-        env.updateState(myAction);
-        myAction= new Action(1, 4, 2, 3);
+        Action myAction = new Action(1,3,2,2); // should eat pawn
         env.updateState(myAction);
 
         //System.out.println(nextState);
