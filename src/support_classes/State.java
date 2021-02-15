@@ -131,6 +131,21 @@ public class State implements Cloneable {
             blackMap.get(p.x).remove(p.y);
         }
     }
+    public void add_pawn(Pawn p){
+        if (p.is_white) {
+            this.whitePawns.add(p);
+            if(!this.whiteMap.containsKey(p.x)) {
+                this.whiteMap.put(p.x, new HashMap<Integer, Pawn>());
+            }
+            this.whiteMap.get(p.x).put(p.y,p);
+        } else {
+            this.blackPawns.add(p);
+            if(!this.blackMap.containsKey(p.x)) {
+                this.blackMap.put(p.x, new HashMap<Integer, Pawn>());
+            }
+            this.blackMap.get(p.x).put(p.y,p);
+        }
+    }
 
     public void delete_pawn(int x, int y)
     {

@@ -64,7 +64,7 @@ public class Pawn implements Cloneable {
             this.x++;
         } else {
             this.y--;
-            this.x--;
+            this.x++;
         }
     }
     public void takeLeft(){
@@ -73,7 +73,7 @@ public class Pawn implements Cloneable {
             this.x--;
         } else {
             this.y--;
-            this.x++;
+            this.x--;
         }
     }
     public void updateLeagalMoves(State s){

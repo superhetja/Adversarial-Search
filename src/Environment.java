@@ -1,6 +1,9 @@
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Arrays;
+
 import support_classes.*;
 /**
  * Creates a board and places pawns down
@@ -112,24 +115,54 @@ public class Environment {
             *whatever pawn that was in (x1,y1) must be moved to (x2,y2)
             *every pawn in affected coordinates must have their actions updated
         */
-        State newState = (State)state.clone();
-        Pawn p = state.getPawn(lastMove.x1, lastMove.y1); // getting current pawn
-        boolean color = p.is_white;  // lastMove type Action
+        State newState = state;
+        Pawn currentPawn = state.getPawn(lastMove.x1, lastMove.y1); // getting current pawn
+        boolean color = currentPawn.is_white;  // lastMove type Action
         if(lastMove.x1!=lastMove.x2)//killer move
         {
             newState.delete_pawn(lastMove.x2, lastMove.y2);
         }
         if (color){ // Is the player white?
             // check move legality, for white: current move >= lastmove (but xy1 != xy2 because that's not a move at all)
-            
+            newState.delete_pawn(currentPawn);
             // if move is forward, invalid if any pawn in the way.
             if ((currentPawn.x == lastMove.x2)&&(currentPawn.y + 1 == lastMove.y2)){
-                Pawn otherPawn = (Pawn)state.blackMap.get(lastMove.x2).get(lastMove.y2);
-                Pawn whitePawn = (Pawn)state.whiteMap.get(lastMove.x2).get(lastMove.y2);
-                if (otherPawn == null || whitePawn == null){
+                Pawn otherPawn = state.getPawn(lastMove.x2, lastMove.y2);
+
+                if (otherPawn == null){
                     // No pawns at target location, move is acceptable
                     System.out.println("move is acceptable");
-                    // we update the state to replace currentPawn with newPawn in state.whiteMap
+                    // we update the state to move currentPawn forward
+                    currentPawn.moveForward();
+                    currentPawn.updateLeagalMoves(state);
+                    newState.add_pawn(currentPawn);
+
+                    // update the white pawns affected by this action
+                    List<Integer> list_x=Arrays.asList(0);
+                    List<Integer> list_y=Arrays.asList(-1);
+                    Pawn cpawn;
+                    for (int i =0; i<1;i++){
+                        if (state.checkWhite(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i))) {
+                            cpawn= newState.getPawn(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i));
+                            newState.delete_pawn(cpawn);
+                            cpawn.updateLeagalMoves(newState);
+                            newState.add_pawn(cpawn);
+                        }
+                    }
+                    
+                    // Update the black pawns affected by this action
+                    list_x=Arrays.asList(-1,0,1,-1,1);
+                    list_y=Arrays.asList(1,1,1,0,0);
+                    for (int i =0; i<5;i++){
+                        if (state.checkBlack(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i))) {
+                            cpawn= newState.getPawn(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i));
+                            newState.delete_pawn(cpawn);
+                            cpawn.updateLeagalMoves(newState);
+                            newState.add_pawn(cpawn);
+                        }
+                    }
+                    
+
                 }
                 // out here, otherPawn/whitePawn != null, move is invalid.
             }
@@ -138,42 +171,194 @@ public class Environment {
                 System.out.println("diagonal RIGHT");
                 Pawn otherPawn = (Pawn)state.blackMap.get(lastMove.x2).get(lastMove.y2);
                 System.out.println("Is there a pawn? " + otherPawn);
+                // we update the state to move currentPawn to the right
+                currentPawn.takeRight();
+                currentPawn.updateLeagalMoves(state);
+                newState.add_pawn(currentPawn);
+
+                // update the white pawns affected by this action
+                List<Integer> list_x=Arrays.asList(0,2);
+                List<Integer> list_y=Arrays.asList(-1,0);
+                Pawn cpawn;
+                for (int i =0; i<2;i++){
+                    if (state.checkWhite(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i))) {
+                        cpawn= newState.getPawn(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i));
+                        newState.delete_pawn(cpawn);
+                        cpawn.updateLeagalMoves(newState);
+                        newState.add_pawn(cpawn);
+                    }
+                }
+                
+                // Update the black pawns affected by this action
+                list_x=Arrays.asList(-1,1,-1,-2);
+                list_y=Arrays.asList(1,1,0,0);
+                for (int i =0; i<4;i++){
+                    if (state.checkBlack(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i))) {
+                        cpawn= newState.getPawn(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i));
+                        newState.delete_pawn(cpawn);
+                        cpawn.updateLeagalMoves(newState);
+                        newState.add_pawn(cpawn);
+                    }
+                }
+
             }
             // else if move is diagonal LEFT, require a BLACK pawn
             else if ((currentPawn.x == lastMove.x2 - 1) && (currentPawn.y == lastMove.y2 -1)){
                 System.out.println("diagonal RIGHT");
                 Pawn otherPawn = (Pawn)state.blackMap.get(lastMove.x2).get(lastMove.y2);
                 System.out.println("Is there a pawn? " + otherPawn);
+
+                 // we update the state to move currentPawn to the left
+                 currentPawn.takeLeft();
+                 currentPawn.updateLeagalMoves(state);
+                 newState.add_pawn(currentPawn);
+ 
+                 // update the white pawns affected by this action
+                 List<Integer> list_x=Arrays.asList(0,-2);
+                 List<Integer> list_y=Arrays.asList(-1,0);
+                 Pawn cpawn;
+                 for (int i =0; i<2;i++){
+                     if (state.checkWhite(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i))) {
+                        cpawn= newState.getPawn(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i));
+                        newState.delete_pawn(cpawn);
+                        cpawn.updateLeagalMoves(newState);
+                        newState.add_pawn(cpawn);
+                     }
+                 }
+                 
+                 // Update the black pawns affected by this action
+                 list_x=Arrays.asList(-1,1,1,2);
+                 list_y=Arrays.asList(1,1,0,0);
+                 for (int i =0; i<4;i++){
+                     if (state.checkBlack(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i))) {
+                        cpawn= newState.getPawn(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i));
+                        newState.delete_pawn(cpawn);
+                        cpawn.updateLeagalMoves(newState);
+                        newState.add_pawn(cpawn);
+                     }
+                 }
             }
 
             
-    }       
+        } else { // player is black
+            // Delete the old paw
+            newState.delete_pawn(currentPawn);
+            // if move is forward, invalid if any pawn in the way.
+            if ((currentPawn.x == lastMove.x2)&&(currentPawn.y - 1 == lastMove.y2)){
+                Pawn otherPawn = state.getPawn(lastMove.x2, lastMove.y2);
 
-        /*
-       
+                if (otherPawn == null){
+                    // No pawns at target location, move is acceptable
+                    System.out.println("move is acceptable");
+                    // we update the state to move currentPawn forward
+                    currentPawn.moveForward();
+                    currentPawn.updateLeagalMoves(state);
+                    newState.add_pawn(currentPawn);
 
+                    // update the black pawns affected by this action
+                    List<Integer> list_x=Arrays.asList(0);
+                    List<Integer> list_y=Arrays.asList(1);
+                    Pawn cpawn;
+                    for (int i =0; i<1;i++){
+                        if (state.checkBlack(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i))) {
+                            cpawn= newState.getPawn(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i));
+                            newState.delete_pawn(cpawn);
+                            cpawn.updateLeagalMoves(newState);
+                            newState.add_pawn(cpawn);
+                        }
+                    }
+                    
+                    // Update the white pawns affected by this action
+                    list_x=Arrays.asList(-1,0,1,-1,1);
+                    list_y=Arrays.asList(-1,-1,-1,0,0);
+                    for (int i =0; i<5;i++){
+                        if (state.checkWhite(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i))) {
+                            cpawn= newState.getPawn(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i));
+                            newState.delete_pawn(cpawn);
+                            cpawn.updateLeagalMoves(newState);
+                            newState.add_pawn(cpawn);
+                        }
+                    }
+                    
 
-        if (color) // white player
-            color = color && state.whiteMap.get(lastMove.x1).containsKey(lastMove.y1); // nested dictionaries, riiiiight
-            system.out.println(color);
-            // we want to know if the pawn in this square belongs to the current player.
-
-        else if (!color) //it's not white, let's check if it's black (just to be safe)
-        {
-            if (!state.blackMap.containsKey(lastMove.x1)){
-                //throw Exception //was not a legal move.  
+                }
+                // out here, otherPawn/whitePawn != null, move is invalid.
             }
-            if (!state.blackMap.get(lastMove.x1).containsKey(lastMove.y1)){
-                //throw Exception //was not a legal move.
-            }
-        }
+            // else if move is diagonal RIGHT, require a BLACK pawn
+            else if ((currentPawn.x + 1 == lastMove.x2) && (currentPawn.y - 1 == lastMove.y2)){
+                System.out.println("diagonal RIGHT");
+                Pawn otherPawn = (Pawn)state.blackMap.get(lastMove.x2).get(lastMove.y2);
+                System.out.println("Is there a pawn? " + otherPawn);
+                // we update the state to move currentPawn to the right
+                currentPawn.takeRight();
+                currentPawn.updateLeagalMoves(state);
+                newState.add_pawn(currentPawn);
 
-        new_state.whitePawns.remove(new Pawn(lastMove.x1, lastMove.y1));
-        Pawn new_pawn = new Pawn(lastMove.x2, lastMove.y2, "white");
-        new_state.whitePawns.add(new_pawn);
-        if(new_state.blackPawns.contains(new_pawn)){
-            new_state.blackPawns.remove(new_pawn);
-        }*/
+                // update the black pawns affected by this action
+                List<Integer> list_x=Arrays.asList(0,2);
+                List<Integer> list_y=Arrays.asList(1,0);
+                Pawn cpawn;
+                for (int i =0; i<2;i++){
+                    if (state.checkBlack(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i))) {
+                        cpawn= newState.getPawn(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i));
+                        newState.delete_pawn(cpawn);
+                        cpawn.updateLeagalMoves(newState);
+                        newState.add_pawn(cpawn);
+                    }
+                }
+                
+                // Update the white pawns affected by this action
+                list_x=Arrays.asList(-1,1,-1,-2);
+                list_y=Arrays.asList(-1,-1,0,0);
+                for (int i =0; i<4;i++){
+                    if (state.checkWhite(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i))) {
+                        cpawn= newState.getPawn(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i));
+                        newState.delete_pawn(cpawn);
+                        cpawn.updateLeagalMoves(newState);
+                        newState.add_pawn(cpawn);
+                    }
+                }
+
+            }
+            // else if move is diagonal LEFT, require a BLACK pawn
+            else if ((currentPawn.x == lastMove.x2 - 1) && (currentPawn.y == lastMove.y2 -1)){
+                System.out.println("diagonal RIGHT");
+                Pawn otherPawn = (Pawn)state.blackMap.get(lastMove.x2).get(lastMove.y2);
+                System.out.println("Is there a pawn? " + otherPawn);
+
+                 // we update the state to move currentPawn to the left
+                 currentPawn.takeLeft();
+                 currentPawn.updateLeagalMoves(state);
+                 newState.add_pawn(currentPawn);
+ 
+                 // update the black pawns affected by this action
+                 List<Integer> list_x=Arrays.asList(0,-2);
+                 List<Integer> list_y=Arrays.asList(1,0);
+                 Pawn cpawn;
+                 for (int i =0; i<2;i++){
+                     if (state.checkBlack(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i))) {
+                        cpawn= newState.getPawn(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i));
+                        newState.delete_pawn(cpawn);
+                        cpawn.updateLeagalMoves(newState);
+                        newState.add_pawn(cpawn);
+                     }
+                 }
+                 
+                 // Update the white pawns affected by this action
+                 list_x=Arrays.asList(-1,1,1,2);
+                 list_y=Arrays.asList(-1,-1,0,0);
+                 for (int i =0; i<4;i++){
+                     if (state.checkWhite(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i))) {
+                        cpawn= newState.getPawn(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i));
+                        newState.delete_pawn(cpawn);
+                        cpawn.updateLeagalMoves(newState);
+                        newState.add_pawn(cpawn);
+                     }
+                 }
+            }
+
+
+        }  
         return newState;
     }
     public static void main(String[] args){
@@ -187,8 +372,10 @@ public class Environment {
             System.out.println(action);
         }*/
         // TESTING FUNCTION getNextState(state, action);
-        Action myAction = new Action(1,2,1,3); // should eat pawn
-        State nextState = env.getNextState(env.currentState, myAction);
+        Action myAction = new Action(1,2,2,3); // should eat pawn
+        env.updateState(myAction);
+        myAction= new Action(1, 4, 2, 3);
+        env.updateState(myAction);
 
         //System.out.println(nextState);
 
