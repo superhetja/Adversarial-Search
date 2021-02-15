@@ -146,6 +146,7 @@ public class State implements Cloneable {
         {
             p= ps.next();
             p = new Pawn(p.x,p.y,p.is_white);
+            p.updateLeagalMoves(this);
             cloned.pawns.add(p);
             if(p.is_white)
             {
