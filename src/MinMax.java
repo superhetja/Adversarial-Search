@@ -65,7 +65,7 @@ public class MinMax implements Search{
     {
         
         if(clock.getTime()-starting+time_padding>max_time)
-            throw new RunTimeException();
+            throw new RuntimeException();
         
         if((depth == 0) || env.isTerminalState(state))
         {
