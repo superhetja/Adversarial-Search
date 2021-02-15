@@ -135,7 +135,7 @@ public class Environment {
                     // we update the state to move currentPawn forward
                     currentPawn.moveForward();
                     currentPawn.updateLeagalMoves(state);
-                    newState.whitePawns.add(currentPawn);
+                    newState.add_pawn(currentPawn);
 
                     // update the white pawns affected by this action
                     List<Integer> list_x=Arrays.asList(0);
@@ -144,8 +144,9 @@ public class Environment {
                     for (int i =0; i<1;i++){
                         if (state.checkWhite(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i))) {
                             cpawn= newState.getPawn(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i));
-                            cpawn.updateLeagalMoves(state);
-                            newState.whitePawns.add(cpawn);
+                            newState.delete_pawn(cpawn);
+                            cpawn.updateLeagalMoves(newState);
+                            newState.add_pawn(cpawn);
                         }
                     }
                     
@@ -155,8 +156,9 @@ public class Environment {
                     for (int i =0; i<5;i++){
                         if (state.checkBlack(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i))) {
                             cpawn= newState.getPawn(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i));
-                            cpawn.updateLeagalMoves(state);
-                            newState.blackPawns.add(cpawn);
+                            newState.delete_pawn(cpawn);
+                            cpawn.updateLeagalMoves(newState);
+                            newState.add_pawn(cpawn);
                         }
                     }
                     
@@ -172,7 +174,7 @@ public class Environment {
                 // we update the state to move currentPawn to the right
                 currentPawn.takeRight();
                 currentPawn.updateLeagalMoves(state);
-                newState.whitePawns.add(currentPawn);
+                newState.add_pawn(currentPawn);
 
                 // update the white pawns affected by this action
                 List<Integer> list_x=Arrays.asList(0,2);
@@ -181,8 +183,9 @@ public class Environment {
                 for (int i =0; i<2;i++){
                     if (state.checkWhite(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i))) {
                         cpawn= newState.getPawn(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i));
-                        cpawn.updateLeagalMoves(state);
-                        newState.whitePawns.add(cpawn);
+                        newState.delete_pawn(cpawn);
+                        cpawn.updateLeagalMoves(newState);
+                        newState.add_pawn(cpawn);
                     }
                 }
                 
@@ -192,8 +195,9 @@ public class Environment {
                 for (int i =0; i<4;i++){
                     if (state.checkBlack(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i))) {
                         cpawn= newState.getPawn(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i));
-                        cpawn.updateLeagalMoves(state);
-                        newState.blackPawns.add(cpawn);
+                        newState.delete_pawn(cpawn);
+                        cpawn.updateLeagalMoves(newState);
+                        newState.add_pawn(cpawn);
                     }
                 }
 
@@ -207,7 +211,7 @@ public class Environment {
                  // we update the state to move currentPawn to the left
                  currentPawn.takeLeft();
                  currentPawn.updateLeagalMoves(state);
-                 newState.whitePawns.add(currentPawn);
+                 newState.add_pawn(currentPawn);
  
                  // update the white pawns affected by this action
                  List<Integer> list_x=Arrays.asList(0,-2);
@@ -215,9 +219,10 @@ public class Environment {
                  Pawn cpawn;
                  for (int i =0; i<2;i++){
                      if (state.checkWhite(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i))) {
-                         cpawn= newState.getPawn(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i));
-                         cpawn.updateLeagalMoves(state);
-                         newState.whitePawns.add(cpawn);
+                        cpawn= newState.getPawn(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i));
+                        newState.delete_pawn(cpawn);
+                        cpawn.updateLeagalMoves(newState);
+                        newState.add_pawn(cpawn);
                      }
                  }
                  
@@ -226,9 +231,10 @@ public class Environment {
                  list_y=Arrays.asList(1,1,0,0);
                  for (int i =0; i<4;i++){
                      if (state.checkBlack(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i))) {
-                         cpawn= newState.getPawn(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i));
-                         cpawn.updateLeagalMoves(state);
-                         newState.blackPawns.add(cpawn);
+                        cpawn= newState.getPawn(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i));
+                        newState.delete_pawn(cpawn);
+                        cpawn.updateLeagalMoves(newState);
+                        newState.add_pawn(cpawn);
                      }
                  }
             }
@@ -247,7 +253,7 @@ public class Environment {
                     // we update the state to move currentPawn forward
                     currentPawn.moveForward();
                     currentPawn.updateLeagalMoves(state);
-                    newState.blackPawns.add(currentPawn);
+                    newState.add_pawn(currentPawn);
 
                     // update the black pawns affected by this action
                     List<Integer> list_x=Arrays.asList(0);
@@ -256,8 +262,9 @@ public class Environment {
                     for (int i =0; i<1;i++){
                         if (state.checkBlack(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i))) {
                             cpawn= newState.getPawn(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i));
-                            cpawn.updateLeagalMoves(state);
-                            newState.blackPawns.add(cpawn);
+                            newState.delete_pawn(cpawn);
+                            cpawn.updateLeagalMoves(newState);
+                            newState.add_pawn(cpawn);
                         }
                     }
                     
@@ -267,9 +274,9 @@ public class Environment {
                     for (int i =0; i<5;i++){
                         if (state.checkWhite(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i))) {
                             cpawn= newState.getPawn(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i));
-                            cpawn.updateLeagalMoves(state);
-                            System.out.println(cpawn.toString());
-                            newState.whitePawns.add(cpawn);
+                            newState.delete_pawn(cpawn);
+                            cpawn.updateLeagalMoves(newState);
+                            newState.add_pawn(cpawn);
                         }
                     }
                     
@@ -285,7 +292,7 @@ public class Environment {
                 // we update the state to move currentPawn to the right
                 currentPawn.takeRight();
                 currentPawn.updateLeagalMoves(state);
-                newState.blackPawns.add(currentPawn);
+                newState.add_pawn(currentPawn);
 
                 // update the black pawns affected by this action
                 List<Integer> list_x=Arrays.asList(0,2);
@@ -294,8 +301,9 @@ public class Environment {
                 for (int i =0; i<2;i++){
                     if (state.checkBlack(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i))) {
                         cpawn= newState.getPawn(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i));
-                        cpawn.updateLeagalMoves(state);
-                        newState.blackPawns.add(cpawn);
+                        newState.delete_pawn(cpawn);
+                        cpawn.updateLeagalMoves(newState);
+                        newState.add_pawn(cpawn);
                     }
                 }
                 
@@ -305,8 +313,9 @@ public class Environment {
                 for (int i =0; i<4;i++){
                     if (state.checkWhite(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i))) {
                         cpawn= newState.getPawn(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i));
-                        cpawn.updateLeagalMoves(state);
-                        newState.whitePawns.add(cpawn);
+                        newState.delete_pawn(cpawn);
+                        cpawn.updateLeagalMoves(newState);
+                        newState.add_pawn(cpawn);
                     }
                 }
 
@@ -320,7 +329,7 @@ public class Environment {
                  // we update the state to move currentPawn to the left
                  currentPawn.takeLeft();
                  currentPawn.updateLeagalMoves(state);
-                 newState.blackPawns.add(currentPawn);
+                 newState.add_pawn(currentPawn);
  
                  // update the black pawns affected by this action
                  List<Integer> list_x=Arrays.asList(0,-2);
@@ -328,9 +337,10 @@ public class Environment {
                  Pawn cpawn;
                  for (int i =0; i<2;i++){
                      if (state.checkBlack(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i))) {
-                         cpawn= newState.getPawn(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i));
-                         cpawn.updateLeagalMoves(state);
-                         newState.blackPawns.add(cpawn);
+                        cpawn= newState.getPawn(lastMove.x1+list_x.get(i), lastMove.y1+list_y.get(i));
+                        newState.delete_pawn(cpawn);
+                        cpawn.updateLeagalMoves(newState);
+                        newState.add_pawn(cpawn);
                      }
                  }
                  
@@ -339,9 +349,10 @@ public class Environment {
                  list_y=Arrays.asList(-1,-1,0,0);
                  for (int i =0; i<4;i++){
                      if (state.checkWhite(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i))) {
-                         cpawn= newState.getPawn(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i));
-                         cpawn.updateLeagalMoves(state);
-                         newState.whitePawns.add(cpawn);
+                        cpawn= newState.getPawn(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i));
+                        newState.delete_pawn(cpawn);
+                        cpawn.updateLeagalMoves(newState);
+                        newState.add_pawn(cpawn);
                      }
                  }
             }
