@@ -93,8 +93,10 @@ public class Pawn implements Cloneable {
             }
         } else {
             if (!s.whitePawns.contains(new Pawn(x, y-1, "white"))){
-                // move forvard
-                tmp_moves.add(new Action(x, y, x, y-1));
+                if (!s.blackPawns.contains(new Pawn(x, y+1, "black"))){
+                    // move forvard
+                    tmp_moves.add(new Action(x, y, x, y-1));
+                }
             } else if (s.whitePawns.contains(new Pawn(x+1, y-1, "white"))){
                 // take right
                 tmp_moves.add(new Action(x, y, x+1, y-1));
