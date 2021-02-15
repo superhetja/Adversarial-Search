@@ -17,12 +17,10 @@ public class MinMax implements Search{
         this.her = heuristic;
         this.pruning = pruning;
     }*/
-
+    //maximaze for the color (is_white)
     public Action doSearch(State state, boolean color)
     {
         int score = 1<<31;//negative infinity
-        if (!color)
-            score = ~score;
         Action action;
         Action best = null;
         int ret;
@@ -38,7 +36,7 @@ public class MinMax implements Search{
                 while (actions.hasNext())
                 {
                     action = actions.next();
-                    ret = rec_search(env.getNextState(state, action), depth, !color);
+                    ret = rec_search(env.getNextState(state, action), depth-1, false, !color);
                     if (ret>score)
                     {
                         best = action;
@@ -54,7 +52,7 @@ public class MinMax implements Search{
         }
     }
 
-    private int rec_search(State state, int depth, boolean color)
+    private int rec_search(State state, int depth, boolean maximizing, boolean color)
     {
         /*
         if(checkfor_timeup(fjdkslaj))
@@ -65,14 +63,14 @@ public class MinMax implements Search{
             return her.eval(state);
         }
         int ret=0;
-        int best = color?1<<31:~(1<<31);
+        int best = maximizing?~(1<<31):1<<31;//best or worst for minimizing
         Action action;
         Iterator<Action> actions = env.legalMoves(state, color);
         while (actions.hasNext())
         {
             action = actions.next();
-            ret = rec_search(env.getNextState(state, action), depth-1, !color);
-            if(ret<best ^ color)
+            ret = rec_search(env.getNextState(state, action), depth-1, !maximizing, !color);
+            if((ret<best) ^ maximizing)
                 best = ret;
         }
         return ret;
