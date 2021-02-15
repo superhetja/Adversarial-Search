@@ -1,14 +1,21 @@
 import support_classes.*;
+
+import java.util.Date;
 import java.util.Iterator;
 
 public class MinMax implements Search{
     Environment env;
     Heuristic her;
     Pruning pruning;
+    long starting;
+    Date clock = new Date();
+    long time_padding = 1000;
+    int max_time;
     public MinMax(Environment env, Heuristic heuristic, int max_time)
     {
         this.env = env;
         this.her = heuristic;
+        this.max_time = max_time;
     }
     /*
     @Override
@@ -26,6 +33,7 @@ public class MinMax implements Search{
         int ret;
         int depth = 2;
         Iterator<Action> actions;
+        starting = clock.getTime();
         if (env.isTerminalState(state))//state.is_terminal();  env.is_termialn(state) local is_termal(state), herusic.is_termal(state)
         //state.get_next(action)→ state
             return null;
@@ -54,10 +62,10 @@ public class MinMax implements Search{
 
     private int rec_search(State state, int depth, boolean maximizing, boolean color)
     {
-        /*
-        if(checkfor_timeup(fjdkslaj))
+        
+        if(clock.getTime()-starting+time_padding>max_time)
             throw new RunTimeException();
-        */
+        
         if((depth == 0) || env.isTerminalState(state))
         {
             return her.eval(state);
