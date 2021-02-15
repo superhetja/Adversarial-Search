@@ -113,23 +113,57 @@ public class Environment {
             *every pawn in affected coordinates must have their actions updated
         */
         State newState = (State)state.clone();
-        Pawn p = state.getPawn(lastMove.x1, lastMove.y1); // getting current pawn
-        boolean color = p.is_white;  // lastMove type Action
+        Pawn currentPawn = state.getPawn(lastMove.x1, lastMove.y1); // getting current pawn
+        boolean color = currentPawn.is_white;  // lastMove type Action
         if(lastMove.x1!=lastMove.x2)//killer move
         {
             newState.delete_pawn(lastMove.x2, lastMove.y2);
         }
         if (color){ // Is the player white?
             // check move legality, for white: current move >= lastmove (but xy1 != xy2 because that's not a move at all)
-            
+            newState.delete_pawn(currentPawn);
             // if move is forward, invalid if any pawn in the way.
             if ((currentPawn.x == lastMove.x2)&&(currentPawn.y + 1 == lastMove.y2)){
-                Pawn otherPawn = (Pawn)state.blackMap.get(lastMove.x2).get(lastMove.y2);
-                Pawn whitePawn = (Pawn)state.whiteMap.get(lastMove.x2).get(lastMove.y2);
-                if (otherPawn == null || whitePawn == null){
+                Pawn otherPawn = state.getPawn(lastMove.x2, lastMove.y2);
+
+                if (otherPawn == null){
                     // No pawns at target location, move is acceptable
                     System.out.println("move is acceptable");
-                    // we update the state to replace currentPawn with newPawn in state.whiteMap
+                    // we update the state to move currentPawn forward
+                    currentPawn.moveForward();
+                    currentPawn.updateLeagalMoves(state);
+                    newState.whitePawns.add(currentPawn);
+
+                    // update the pawns affected by this action
+                    Pawn cpawn;
+                    if (state.checkWhite(lastMove.x1-1, lastMove.y1-1)) {
+                        cpawn= newState.getPawn(lastMove.x1-1, lastMove.y1-1);
+                        cpawn.updateLeagalMoves(state);
+                        newState.whitePawns.add(cpawn);
+                    }
+                    if (state.checkWhite(lastMove.x1, lastMove.y1-1)) {
+                        cpawn= newState.getPawn(lastMove.x1, lastMove.y1-1);
+                        cpawn.updateLeagalMoves(state);
+                        newState.whitePawns.add(cpawn);
+                    }
+                    if (state.checkWhite(lastMove.x1+1, lastMove.y1-1)) {
+                        cpawn= newState.getPawn(lastMove.x1+1, lastMove.y1-1);
+                        cpawn.updateLeagalMoves(state);
+                        newState.whitePawns.add(cpawn);
+                    }
+                    if (state.checkWhite(lastMove.x1-1, lastMove.y1)) {
+                        cpawn= newState.getPawn(lastMove.x1-1, lastMove.y1);
+                        cpawn.updateLeagalMoves(state);
+                        newState.whitePawns.add(cpawn);
+                    }
+                    if (state.checkWhite(lastMove.x1+1, lastMove.y1)) {
+                        cpawn= newState.getPawn(lastMove.x1+1, lastMove.y1);
+                        cpawn.updateLeagalMoves(state);
+                        newState.whitePawns.add(cpawn);
+                    }
+
+                    
+
                 }
                 // out here, otherPawn/whitePawn != null, move is invalid.
             }
@@ -177,7 +211,7 @@ public class Environment {
         return newState;
     }
     public static void main(String[] args){
-        var env = new Environment(4,4);
+        var env = new Environment(5,5);
         //System.out.println(env.currentState);
         /*
         Iterator<Action> actions = env.legalMoves(env.currentState,true);
@@ -188,7 +222,7 @@ public class Environment {
         }*/
         // TESTING FUNCTION getNextState(state, action);
         Action myAction = new Action(1,2,1,3); // should eat pawn
-        State nextState = env.getNextState(env.currentState, myAction);
+        env.updateState(myAction);
 
         //System.out.println(nextState);
 
