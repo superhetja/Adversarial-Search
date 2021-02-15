@@ -115,7 +115,7 @@ public class Environment {
             *whatever pawn that was in (x1,y1) must be moved to (x2,y2)
             *every pawn in affected coordinates must have their actions updated
         */
-        State newState = (State)state.clone();
+        State newState = state;
         Pawn currentPawn = state.getPawn(lastMove.x1, lastMove.y1); // getting current pawn
         boolean color = currentPawn.is_white;  // lastMove type Action
         if(lastMove.x1!=lastMove.x2)//killer move
@@ -372,7 +372,9 @@ public class Environment {
             System.out.println(action);
         }*/
         // TESTING FUNCTION getNextState(state, action);
-        Action myAction = new Action(1,3,2,2); // should eat pawn
+        Action myAction = new Action(1,2,2,3); // should eat pawn
+        env.updateState(myAction);
+        myAction= new Action(1, 4, 2, 3);
         env.updateState(myAction);
 
         //System.out.println(nextState);
