@@ -150,7 +150,15 @@ public class Environment {
                     }
                     
                     // TODO: update the black pawns affected by this action
-
+                    list_x=Arrays.asList(-1,0,1,-1,1);
+                    list_y=Arrays.asList(1,1,1,0,0);
+                    for (int i =0; i<5;i++){
+                        if (state.checkBlack(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i))) {
+                            cpawn= newState.getPawn(lastMove.x2+list_x.get(i), lastMove.y2+list_y.get(i));
+                            cpawn.updateLeagalMoves(state);
+                            newState.blackPawns.add(cpawn);
+                        }
+                    }
                     
 
                 }
