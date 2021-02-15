@@ -41,9 +41,11 @@ public class Pawn implements Cloneable {
 	}
 
 	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) { return null; }
+        Pawn clone = new Pawn(x,y,is_white);
+        clone.moves = new HashSet<Action>();
+        for(Action act: this.moves)
+            clone.moves.add(act);
+        return clone;
 	}
 
 	public String toString() {
@@ -77,6 +79,17 @@ public class Pawn implements Cloneable {
         }
     }
     public void updateLeagalMoves(State s){
+        
+        moves = new HashSet<Action>();
+        int shift = is_white?1:-1;
+        if(s.getPawn(x, y+shift)==null)//go forward
+            moves.add(new Action(x,y,x,y+shift));
+        if(s.checkBlack(x+1, y+shift)&&is_white || s.checkWhite(x+1, y+shift)&&!is_white)
+            moves.add(new Action(x,y,x+1,y+shift));
+        if(s.checkBlack(x-1, y+shift)&&is_white || s.checkWhite(x-1, y+shift)&&!is_white)
+            moves.add(new Action(x,y,x-1,y+shift));
+    }
+        /*
         HashSet<Action> tmp_moves = new HashSet<Action>();
         if (is_white) {
             if (!s.blackPawns.contains(new Pawn(x, y+1, "black"))){
@@ -106,7 +119,7 @@ public class Pawn implements Cloneable {
             }
         }
         this.moves= tmp_moves;
-    }
+        */
 
     public static void main(String[] args){
         var myPawn = new Pawn(1,3,"white");
@@ -115,6 +128,9 @@ public class Pawn implements Cloneable {
         myPawn.moveForward();
         var pawnClone = myPawn.clone();
         System.out.println(pawnClone.equals(myPawn));
+        myPawn.moves.add(new Action(1,2,3,4));
+        System.out.println(myPawn);
+        System.out.println(myPawn.clone());
     }
 
 }

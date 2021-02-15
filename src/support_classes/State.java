@@ -23,7 +23,6 @@ public class State implements Cloneable {
         blackPawns = new HashSet<Pawn>();
         blackMap = new HashMap<Integer, HashMap<Integer, Pawn>>();
         pawns = new HashSet<Pawn>();
-
     }
 
 
@@ -160,8 +159,8 @@ public class State implements Cloneable {
         while (ps.hasNext())
         {
             p= ps.next();
-            p = new Pawn(p.x,p.y,p.is_white);
-            p.updateLeagalMoves(this);
+            p = (Pawn) p.clone();
+            //p.updateLeagalMoves(this);
             cloned.pawns.add(p);
             if(p.is_white)
             {
@@ -188,8 +187,9 @@ public class State implements Cloneable {
     public static void main(String[] args){
         var someState= new State(5,5);
         System.out.println(someState);
-
         State other = someState.clone();
+        System.out.println();
+        System.out.println(other);
         other.blackMap.get(2).get(5).y=-1;
         System.out.println(someState);
         System.out.println(other);

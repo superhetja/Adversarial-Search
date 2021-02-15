@@ -2,6 +2,7 @@ import support_classes.*;
 
 import java.util.Date;
 import java.util.Iterator;
+import java.lang.RuntimeException;
 
 public class MinMax implements Search{
     Environment env;
