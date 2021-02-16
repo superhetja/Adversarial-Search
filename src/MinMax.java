@@ -1,6 +1,7 @@
 import support_classes.*;
 import java.util.Queue;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.lang.RuntimeException;
@@ -15,7 +16,8 @@ public class MinMax implements Search{
         Node parent;
         State state;
         boolean color;
-        public Node(Action action,Node parent,int value, boolean is_terminal, State state,boolean color)
+        int depth_searched;
+        public Node(Action action,Node parent,int value, boolean is_terminal, State state, int depth)
         {
             this.action = action;
             this.parent = parent;
@@ -23,23 +25,51 @@ public class MinMax implements Search{
             this.is_terminal = is_terminal;
             this.state = state;
             this.color = color;
+            this.depth_searched = depth;
         }
-        public Iterator<Node> expand = new Iterator<Node>(){
+        private Iterator<Node> expand = new Iterator<Node>(){
             Iterator<Action> actions = env.legalMoves(state, color);
             public boolean hasNext()
             {
+                if (is_terminal)
+                    return false;
                 boolean check = actions.hasNext();
-                if(!check)
-                    this.state = null;//save space
+                //if(!check)
+                //    value = ;
                 return check;
             }
             public Node next()
             {
                 Action act = actions.next();
                 State nxt = env.getNextState(state, act);
-                return new Node(act, this, her.eval(nxt), env.isTerminalState(nxt), nxt,!color);
+                return new Node(act, null, her.eval(nxt), env.isTerminalState(nxt), nxt,depth_searched+1);
             }
         };
+
+       public Node expand(Action action)
+       {
+            if(!expand.hasNext())
+                return null;
+            Node ret = expand.next();
+            ret.parent = this;
+            return ret;
+       }
+
+       public void Propigate()
+       {
+           if (parent != null)
+           {
+                if(parent.depth_searched<this.depth_searched)
+                {
+                    parent.depth_searched = this.depth_searched;
+                    parent.value = this.value;
+                }
+                else
+                {
+                    parent.value = (this.value<parent.value)^parent.maxing?this.value:parent.value;
+                }
+           }
+       }
     }
     Environment env;
     Heuristic her;
@@ -59,8 +89,40 @@ public class MinMax implements Search{
     
     public Action doSearch(State state)
     {
+        HashSet<Node> first_moves = new HashSet<Node>();
+        Iterator<Action> actions = env.legalMoves(state, state.whites_turn);
+        Action act;
+        Node curr;
+        State nxt;
+        while(actions.hasNext())
+        {
+            act = actions.next();
+            nxt = env.getNextState(state, act);
+            curr = new Node(act,null,0, env.isTerminalState(nxt),nxt,1);
+            first_moves.add(curr);
+            frontier.add(curr);
+        }
+        //do searches using the frontier
 
-        return new Action(0,0,0,0);
+        Action bestAction = null;
+        int bestValue=0;
+        Iterator<Node> iter = first_moves.iterator();
+        while(iter.hasNext())
+        {
+            curr = iter.next();
+            if(bestAction==null)
+            {
+                bestAction = curr.action;
+                bestValue = curr.value;
+            }
+            else if(bestValue<curr.value)
+            {
+                
+                bestAction = curr.action;
+                bestValue = curr.value;
+            }
+        }
+        return bestAction;
     }
 
 
