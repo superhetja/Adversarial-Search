@@ -9,6 +9,24 @@ import java.lang.RuntimeException;
 public class MinMax implements Search{
     private class Node
     {
+        Action action;
+        int value;
+        Node parent;
+        State state;
+        public Node(Action action,Node parent,int value, State state)
+        {
+            this.action = action;
+            this.parent = parent;
+            this.value = value;
+            this.state = state;
+        }
+        
+        public Node expand(Action action)
+        {   
+            State s = env.getNextState(this.state, action);
+            return new Node(action, this, her.eval(s), s);
+        }
+        /*
         boolean is_terminal;
         boolean maxing;
         Action action;
@@ -69,7 +87,7 @@ public class MinMax implements Search{
                     parent.value = (this.value<parent.value)^parent.maxing?this.value:parent.value;
                 }
            }
-       }
+       }*/
     }
     Environment env;
     Heuristic her;
@@ -89,46 +107,64 @@ public class MinMax implements Search{
     
     public Action doSearch(State state)
     {
-        HashSet<Node> first_moves = new HashSet<Node>();
+        
         Iterator<Action> actions = env.legalMoves(state, state.whites_turn);
-        Action act;
-        Node curr;
-        State nxt;
-        while(actions.hasNext())
-        {
-            act = actions.next();
-            nxt = env.getNextState(state, act);
-            curr = new Node(act,null,0, env.isTerminalState(nxt),nxt,1);
-            first_moves.add(curr);
-            frontier.add(curr);
+        Action bestAction= null;
+        int bestValue=0, tmpValue;
+        Action action;
+        State tmpState;
+        while(actions.hasNext()){
+            action= actions.next();
+            tmpState = env.getNextState(state, action);
+            tmpValue = minmax(new Node(action, null, 0, tmpState), 1);
+            if(bestValue<tmpValue)
+            {
+                bestAction = action;
+                bestValue = tmpValue;
+            }
         }
-        //do searches using the frontier
 
-        Action bestAction = null;
-        int bestValue=0;
-        Iterator<Node> iter = first_moves.iterator();
-        while(iter.hasNext())
-        {
-            curr = iter.next();
-            if(bestAction==null)
-            {
-                bestAction = curr.action;
-                bestValue = curr.value;
-            }
-            else if(bestValue<curr.value)
-            {
-                
-                bestAction = curr.action;
-                bestValue = curr.value;
-            }
-        }
         return bestAction;
+        // HashSet<Node> first_moves = new HashSet<Node>();
+        // Iterator<Action> actions = env.legalMoves(state, state.whites_turn);
+        // Action act;
+        // Node curr;
+        // State nxt;
+        // while(actions.hasNext())
+        // {
+        //     act = actions.next();
+        //     nxt = env.getNextState(state, act);
+        //     curr = new Node(act,null,0, env.isTerminalState(nxt),nxt,1);
+        //     first_moves.add(curr);
+        //     frontier.add(curr);
+        // }
+        // //do searches using the frontier
+
+        // Action bestAction = null;
+        // int bestValue=0;
+        // Iterator<Node> iter = first_moves.iterator();
+        // while(iter.hasNext())
+        // {
+        //     curr = iter.next();
+        //     if(bestAction==null)
+        //     {
+        //         bestAction = curr.action;
+        //         bestValue = curr.value;
+        //     }
+        //     else if(bestValue<curr.value)
+        //     {
+                
+        //         bestAction = curr.action;
+        //         bestValue = curr.value;
+        //     }
+        // }
+        // return bestAction;
     }
     private int minmax(Node node, int depth) {
         int value, tmpval;
         Node child;
         Iterator<Action> moves = env.legalMoves(node.state, node.state.whites_turn);
-        if ((depth==0)|(env.isTerminalState(node.state))){
+        if ((depth==0)|(env.isTerminalState(node.state)|(depth>10))){ //Don't go too deep
             return her.eval(node.state);
         }
         if (depth%2==0){ // maximizing
@@ -165,7 +201,7 @@ public class MinMax implements Search{
     public static void main(String[] args){
         Environment env = new Environment(4, 4);
         Search s = new MinMax(env, new SimpleHeuristics(), 50000);
-        Action ret = s.doSearch(env.getCurrentState(),true);
+        Action ret = s.doSearch(env.getCurrentState());
         System.out.println("this thing: "+ret);
 
     }
