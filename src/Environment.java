@@ -48,6 +48,8 @@ public class Environment {
 
             public boolean hasNext()
             {
+                if(actions == null)
+                    actions = pawns.next().moves.iterator();
                 while (!actions.hasNext()&&pawns.hasNext())
                 {
                     actions = pawns.next().moves.iterator();
@@ -367,10 +369,15 @@ public class Environment {
             System.out.println(action);
         }*/
         // TESTING FUNCTION getNextState(state, action);
-        Action myAction = new Action(1,2,2,3); // should eat pawn
+        /*Action myAction = new Action(1,2,2,3); // should eat pawn
         env.updateState(myAction);
         myAction= new Action(1, 4, 2, 3);
-        env.updateState(myAction);
+        env.updateState(myAction);*/
+        Iterator<Action> act = env.legalMoves(env.getCurrentState(), true);
+        while(act.hasNext())
+        {
+            System.out.println(act.next());
+        }
 
         //System.out.println(nextState);
 

@@ -2,7 +2,7 @@ import support_classes.*;
 
 public interface Search {
     //public void init(Environment env, Heuristic heuristic, Pruning pruning);
-    public Action doSearch(State state, boolean color);
+    public Action doSearch(State state);
 /*    Environment env;
     String color;
 
