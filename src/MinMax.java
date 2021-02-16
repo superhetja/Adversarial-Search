@@ -124,6 +124,31 @@ public class MinMax implements Search{
         }
         return bestAction;
     }
+    private int minmax(Node node, int depth) {
+        int value, tmpval;
+        Node child;
+        Iterator<Action> moves = env.legalMoves(node.state, node.state.whites_turn);
+        if ((depth==0)|(env.isTerminalState(node.state))){
+            return her.eval(node.state);
+        }
+        if (depth%2==0){ // maximizing
+            value = -Integer.MAX_VALUE;
+            while(moves.hasNext()){
+                child= node.expand(moves.next());
+                tmpval = minmax(child, depth+1);
+                value = tmpval>value?tmpval:value;
+                
+            }
+        } else { // minimizing
+            value = Integer.MAX_VALUE;
+            while(moves.hasNext()){
+                child= node.expand(moves.next());
+                tmpval = minmax(child, depth+1);
+                value = tmpval<value?tmpval:value;
+            }
+        }
+        return value;
+    }
 
 
 
