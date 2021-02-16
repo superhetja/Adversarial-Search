@@ -1,55 +1,77 @@
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Arrays;
 
 import support_classes.*;
+
 /**
  * Creates a board and places pawns down
  */
 public class Environment {
 
 
-
+    /**
+     * Current state of the game
+     */
     private State currentState;
-    private int width, height;
-    // I think it may be a good idea to store legalMoves since they are never that many and can save time of looping to find them.
-    //private LinkedList<Pawn> legalMovesWhite, legalMovesBlack; 
 
+
+    /**
+     * Size the board.
+     */
+    private int width, height;
+
+
+    /**
+     * Init function
+     * @param width
+     * @param height
+     */
     public Environment(int width, int height){
         this.width = width;
         this.height = height;
         this.currentState = new State(this.width, this.height);
 
     }
+
+
+
+    /**
+     * Access to the boards height.. 
+     * TODO: Not sure where it is used
+     * @return height of the board
+     */
     public int getHeigth() {
         return this.height;
     }
 
+
+    /**
+     * Returns current state
+     * @return current state
+     */
     public State getCurrentState(){
         return this.currentState;
     }
 
-    /*
-        returns an iterator for all the legal actions in a state given the next teams moves.
-        Iterator<Action> actions = Environment.legalMoves(state,color);
-        while actions.hasNext()
-        {
-            Action action = actions.next();
-            do something with the action
-        }
-    */
+
+    /**
+     * Finds all legal moves of given state for given color.
+     * @param   state   class State to search in
+     * @param   color   boolean color to search for
+     * @return  Iterator of Actions.
+     */
     public Iterator<Action> legalMoves(State state, boolean color){
         Iterator<Action> iterrer = new Iterator<Action>(){
             Iterator<Pawn> pawns = color?state.whitePawns.iterator():state.blackPawns.iterator();
-            
             Iterator<Action> actions = null;
-
             public boolean hasNext()
             {
-                while (!actions.hasNext()&&pawns.hasNext())
+                //TODO: why !action.hasNext()... it throw exception...
+                //while (!actions.hasNext()&&pawns.hasNext())
+                while (pawns.hasNext())
                 {
+                    // TODO: Not sure if it always return right hasNext...
                     actions = pawns.next().moves.iterator();
                 }
                 return actions.hasNext();
@@ -62,6 +84,40 @@ public class Environment {
         };
         return iterrer;
     }
+
+    public Iterator<Action> legalMoves2(State state, boolean color){
+        Iterator<Action> iterrer = new Iterator<Action>(){
+            Iterator<Pawn> pawns = color?state.whitePawns.iterator():state.blackPawns.iterator();
+            Iterator<Action> actions = null;
+            public boolean hasNext()
+            {
+                //TODO: why !action.hasNext()... it throw exception...
+                //while (!actions.hasNext()&&pawns.hasNext())
+                while (pawns.hasNext())
+                {
+                    if (!color){
+                        System.out.println(pawns);
+                    }
+                    actions = pawns.next().moves.iterator();
+                }
+                return actions.hasNext();
+            }
+
+            public Action next()
+            {
+                return actions.next();
+            }
+        };
+        return iterrer;
+    }
+    
+
+
+    /**
+     * Tells if it is a terminals state or not.
+     * @param state
+     * @return  
+     */
     public boolean isTerminalState(State state) {   
         Iterator<Pawn> white_pawns = state.whitePawns.iterator();
         Iterator<Pawn> black_pawns = state.blackPawns.iterator();
@@ -88,7 +144,7 @@ public class Environment {
         }
         return tie;
     }
-    //isTerminal has options: local function, Environment function, state function.
+    
 
     public void updateState(Action lastMove){
         System.out.println("Before update: " + this.currentState);
@@ -356,8 +412,26 @@ public class Environment {
         }  
         return newState;
     }
+
+    public String toString() {
+        return this.currentState.toString();    
+    }
     public static void main(String[] args){
-        var env = new Environment(4,4);
+        /*
+        long startTime = System.nanoTime();
+        methodToTime();
+        long endTime = System.nanoTime();
+
+        long duration = (endTime - startTime);  //divide by 1000000 to get milliseconds.
+        */
+
+        var env = new Environment(200,40);
+        System.out.println("Start timer!");
+        long startTime = System.nanoTime();
+        Boolean lm = env.isTerminalState(env.getCurrentState());
+        long endTime = System.nanoTime();
+
+
         //System.out.println(env.currentState);
         /*
         Iterator<Action> actions = env.legalMoves(env.currentState,true);
@@ -366,6 +440,7 @@ public class Environment {
             Action action = actions.next();
             System.out.println(action);
         }*/
+        /*
         // TESTING FUNCTION getNextState(state, action);
         Action myAction = new Action(1,2,2,3); // should eat pawn
         env.updateState(myAction);
@@ -373,6 +448,6 @@ public class Environment {
         env.updateState(myAction);
 
         //System.out.println(nextState);
-
+        */
     }
 }
