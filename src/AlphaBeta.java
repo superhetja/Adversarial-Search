@@ -1,101 +1,108 @@
 import java.util.Iterator;
-
+import java.util.Queue;
 import support_classes.*;
+import java.util.Date;
+import java.time.Clock;
 
 public class AlphaBeta implements Search{
     private int start_alpha;//Negative Infinity
     private int start_beta;//Infinity
     private Environment env;
     private Heuristic heuristic;
+    private long max_time;
+    private long start_time;
+    private long padding = 1000;
 
-    public  AlphaBeta(Environment env, Heuristic heuristic) {
+    private class Ret
+    {
+        int val;
+        boolean terminal;
+        Action action;
+        public Ret( Action a,int v, boolean b)
+        {val=v;terminal = b;action = a;}
+        public Ret combine(Ret other, boolean maximizing)
+        {
+            if((val<other.val))
+                return new Ret(action, val, terminal&&other.terminal);
+            else
+                return new Ret(other.action, other.val, terminal&&other.terminal);
+        }
+    }
+
+    public  AlphaBeta(Environment env, Heuristic heuristic, long max_time) {
         this.env = env;
         this.heuristic = heuristic;
-    }
-    
-    public boolean isTerminal(State s)
-    {
-        return false;
+        this.heuristic.init(env);
+        start_alpha = 1<<31;
+        start_beta = ~start_alpha;
+        this.max_time = max_time;
     }
 
-    public Action doSearch(State state, boolean color)
+    public Action doSearch(State state)
     {
-        int score = 1<<31;//negative infinity
-        if (!color)
-            score = ~score;
-        Action action;
-        Action best = null;
-        int ret;
+        Ret anchor = new Ret(null, start_alpha, true);
+        Ret ret;
         int depth = 2;
-        Iterator<Action> actions;
-        if (isTerminal(state))
-            return null;
-        try{
-            while (true)
+        start_time = System.currentTimeMillis();
+        try
+        {
+            while(true)
             {
-                actions = env.legalMoves(state, color);
-                while (actions.hasNext())
+                ret = rec_search(state, null, depth, start_alpha, start_beta, true);
+                if(ret.terminal)//You've explored the howl search tree
                 {
-                    action = actions.next();
-                    ret = rec_search(env.getNextState(state, action), depth, start_alpha, start_beta, !color);
-                    if (ret>score)
-                    {
-                        best = action;
-                        score = ret;
-                    }
+                    return ret.action;
                 }
+                anchor = anchor.combine(ret, true);
                 depth++;
+                System.out.println(ret.action + " : " + ret.val);
             }
         }
-        catch(Exception e)
+        catch (RuntimeException e)
         {
-            return best;
+            throw e;
         }
+        //return anchor.action;
     }
 
-    private int rec_search(State state, int depth, int a, int b, boolean color)
+    private Ret rec_search(State state, Action lastAction, int depth, int a, int b, boolean maximizing)
     {
-        if((depth == 0) || isTerminal(state))
+        if (depth == 0 || env.isTerminalState(state))
         {
-            return heuristic.eval(state);
+            return new Ret(lastAction, heuristic.eval(state),true);
         }
-        if (color)
+        Ret value = new Ret(lastAction, maximizing?start_alpha:start_beta, true);
+        Iterator<Action> actions = env.legalMoves(state, state.whites_turn);
+        Action act;
+        long now = System.currentTimeMillis();
+        while(actions.hasNext())
         {
-            int ret; int value = color?start_alpha:start_beta;
-            Action action; Iterator<Action> actions = env.legalMoves(state, color);
-            while (actions.hasNext())
+            if(max_time-padding<now-start_time)
             {
-                action = actions.next();
-                ret = rec_search(env.getNextState(state, action), depth-1,a,b, !color);
-                value = value<ret?ret:value;
-                a = a<ret?ret:a;
-                if (a>=b)
-                {
-                    break;
-                }
+                throw new RuntimeException("out of time");
             }
-            return value;
+                
+            act = actions.next();
+            value = value.combine(rec_search(env.getNextState(state,act), act ,depth-1, a, b, !maximizing), maximizing);
+            if(maximizing)
+                a = value.val;
+            else
+                b = value.val;
+            if(a>=b)
+                break;
         }
-        else
-        {
-            int ret; int value = color?start_alpha:start_beta;
-            Action action; Iterator<Action> actions = env.legalMoves(state, color);
-            while (actions.hasNext())
-            {
-                action = actions.next();
-                ret = rec_search(env.getNextState(state, action), depth-1,a,b, !color);
-                value = value<ret?value:ret;
-                a = a<ret?a:ret;
-                if (b<=a)
-                {
-                    break;
-                }
-            }
-            return value;
-        }
+        return value;
+    }
+    public static void main(String[] args){
+        Environment env = new Environment(4, 4);
+        Search s = new AlphaBeta(env, new SimpleHeuristics(), (long)~(1<<63));
+        Action ret = s.doSearch(env.getCurrentState());
+        System.out.println("this thing: "+ret);
         
     }
 }
+
+
 /*
 public class AlphaBeta implements Pruning{
     private int start_alpha;//Negative Infinity

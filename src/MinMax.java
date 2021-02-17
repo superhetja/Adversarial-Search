@@ -204,5 +204,6 @@ public class MinMax implements Search{
         Action ret = s.doSearch(env.getCurrentState());
         System.out.println("this thing: "+ret);
 
+        
     }
 }
