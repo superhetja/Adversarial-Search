@@ -105,10 +105,10 @@ public class MinMax implements Search{
         this.max_time = max_time;
     }
     
-    public Action doSearch(State state)
+    public Action doSearch(State state, boolean is_white)
     {
         
-        Iterator<Action> actions = env.legalMoves(state, state.whites_turn);
+        Iterator<Action> actions = env.legalMoves(state, is_white);
         Action bestAction= null;
         int bestValue=0, tmpValue;
         Action action;
@@ -116,11 +116,22 @@ public class MinMax implements Search{
         while(actions.hasNext()){
             action= actions.next();
             tmpState = env.getNextState(state, action);
-            tmpValue = minmax(new Node(action, null, 0, tmpState), 1);
-            if(bestValue<tmpValue)
-            {
-                bestAction = action;
-                bestValue = tmpValue;
+            tmpValue = minmax(new Node(action, null, 0, tmpState), 1, is_white);
+            if (is_white) {
+                if(bestValue<tmpValue)
+                {
+                    bestAction = action;
+                    bestValue = tmpValue;
+                }
+            }
+            else { // is blacks turn
+                if (is_white) {
+                    if(bestValue>tmpValue)
+                    {
+                        bestAction = action;
+                        bestValue = tmpValue;
+                    }
+                }
             }
         }
 
@@ -160,18 +171,18 @@ public class MinMax implements Search{
         // }
         // return bestAction;
     }
-    private int minmax(Node node, int depth) {
+    private int minmax(Node node, int depth, Boolean is_white) {
         int value, tmpval;
         Node child;
         Iterator<Action> moves = env.legalMoves(node.state, node.state.whites_turn);
-        if ((depth==0)|(env.isTerminalState(node.state)|(depth>10))){ //Don't go too deep
+        if ((env.isTerminalState(node.state)|(depth>10))){ //Don't go too deep
             return her.eval(node.state);
         }
-        if (depth%2==0){ // maximizing
+        if ((depth%2==0)&& is_white){ // maximizing
             value = -Integer.MAX_VALUE;
             while(moves.hasNext()){
                 child= node.expand(moves.next());
-                tmpval = minmax(child, depth+1);
+                tmpval = minmax(child, depth+1, is_white);
                 value = tmpval>value?tmpval:value;
                 
             }
@@ -179,7 +190,7 @@ public class MinMax implements Search{
             value = Integer.MAX_VALUE;
             while(moves.hasNext()){
                 child= node.expand(moves.next());
-                tmpval = minmax(child, depth+1);
+                tmpval = minmax(child, depth+1, is_white);
                 value = tmpval<value?tmpval:value;
             }
         }
@@ -201,8 +212,8 @@ public class MinMax implements Search{
     public static void main(String[] args){
         Environment env = new Environment(4, 4);
         Search s = new MinMax(env, new SimpleHeuristics(), 50000);
-        Action ret = s.doSearch(env.getCurrentState());
-        System.out.println("this thing: "+ret);
+        Action ret = s.doSearch(env.getCurrentState(), true);
+        System.out.println("Best Action: "+ret);
 
     }
 }
