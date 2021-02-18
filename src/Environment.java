@@ -149,7 +149,7 @@ public class Environment {
         System.out.println(env);
         
         env.updateState(new Action(2,2,2,3));
-        
+
         System.out.println(env);
         
         env.updateState(new Action(5,5,5,4));

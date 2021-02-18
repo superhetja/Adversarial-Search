@@ -96,4 +96,12 @@ public class Action {
         return "(move " + x1 + " " + y1 + " " + x2 + " " + y2 + ")";
     }
 
+    public static boolean isEqual(Action a1, Action a2){
+        if ((a1.x1 == a2.x1)&&(a1.x2 == a2.x2)){
+            if ((a1.y1 == a2.y1) && (a1.y2==a2.y2)){
+                return true;
+            }
+        }return false;
+    }
+
 }

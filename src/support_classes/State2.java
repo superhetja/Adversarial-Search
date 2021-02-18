@@ -58,7 +58,7 @@ public class State2 implements Cloneable {
                             blackMap.get(bPawn).add(new Action(x,bY,x-1,bY-1));
                         }
                     }
-                    else //forward actiosn
+                    else //forward actions
                     {
                         whiteMap.get(wPawn).add(new Action(x,y, x, y+1));
                         blackMap.get(bPawn).add(new Action(x,bY, x, bY-1));
@@ -207,9 +207,6 @@ public class State2 implements Cloneable {
         someState.delete_pawn(oldPawn);
         someState.add_pawn(newPawn);
  
-
-
-
         System.out.println(someState);
 
     }
