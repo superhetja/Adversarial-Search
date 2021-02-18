@@ -33,6 +33,7 @@ public class State2 implements Cloneable {
         blackMap = new HashMap<Pawn, ArrayList<Action>>();
         this.width = width;
         this.height = height;
+        whites_turn = true;
         Pawn wPawn,bPawn;
         for (int x = 1; x <= width; x++) {
             for(int y=1; y <= 2; y++ ){
@@ -162,6 +163,7 @@ public class State2 implements Cloneable {
         cloned.blackMap = copy(blackMap);
         cloned.width = width;
         cloned.height = height;
+        cloned.whites_turn = whites_turn;
         return cloned;
     }
     
