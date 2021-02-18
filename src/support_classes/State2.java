@@ -90,16 +90,61 @@ public class State2 implements Cloneable {
         else return null;
     }
 
-    public void delete_pawn(Pawn p)
-    {
+    public void delete_pawn(Pawn p) {
         whiteMap.remove(p);
         blackMap.remove(p);
     }
 
-    public void add_pawn(Pawn p, ArrayList<Action> a){
+
+    public void add_pawn(Pawn p, ArrayList<Action> act){
         HashMap<Pawn, ArrayList<Action>> map = p.is_white? whiteMap : blackMap;
+        int pawn_shift = p.is_white? 1:-1;
+        // we have:
+        //  x-1,y+1,    x,y+1,  x+1,y+1
+        //  x-1,y,      p(x,y)  x+1,y
+        //  x-1,y-1,    x,y-1,  x+1,y-1
+        ArrayList<Action> a = new ArrayList<Action>();
+        ArrayList<Action> tmp_action;
+        for (int x = -1; x <= 1; x++){
+            for (int y = -1; y <= 1; y++) {
+                tmp_action = getPawnAction(p.x+x, p.y+y);
+
+                //there is no pawn here
+                if(tmp_action == null){
+                    // for the square in front of pawn that is about to be placed
+                    // x needs to be 0 and y needs to be 1 for white -1 for black
+                    // it that is empty then we can add it to the list
+                    if(x == 0 && y == pawn_shift) {
+                        a.add(new Action(p.x, p.y, p.x, p.y+pawn_shift));
+                    }
+                } else {
+                    //if pawn in front of us then we need to remove its action if it is a forward move that end on your square
+                    if (x == 0){
+                        Iterator<Action> ji = tmp_action.iterator();
+                        while(ji.hasNext()){
+                            // ok if the move is forward move
+                            // and the x2,y2 coordinates of the move are same as py then remove.
+                            // i thing all of the condition except for y2 == y will always be true..
+                            if(ji.next().isForwardMove() && ji.next().x2 == p.x && ji.next().y2 == p.y) {
+                                ji.remove();
+                            }
+                        }
+                    } else if (y != 0 && x == pawn_shift && p.is_white? checkBlack(p.x+x, p.y+y): checkWhite(p.x+x, p.y+y)) {
+                        // if not in same row, and is in front of me and is not in my team  then add move to me and that pawn
+                        a.add(new Action(p.x,p.y, p.x+x, p.y+y));
+                        tmp_action.add(new Action(p.x+x, p.y+y, p.x, p.y));
+
+                    }
+                    
+                }
+                
+            }
+        }
+            
         map.put(p,a);
     }
+
+
 
     public void delete_pawn(int x, int y, boolean is_white)
     {
@@ -150,11 +195,29 @@ public class State2 implements Cloneable {
         ArrayList<Action> a = new ArrayList<Action>();
         a.add(new Action(2,3,2,4));
         someState.add_pawn(newPawn, a);
+
         someState.delete_pawn(oldPawn);
         System.out.println(someState);
+
         ArrayList<Action> k = someState.getPawnAction(2,1);
-        System.out.println(k);
         k.add(new Action(2,1,2,2));
+        System.out.println(k);
+        ArrayList<Action> j = someState.getPawnAction(2,5);
+        System.out.println(j);
+        j.add(new Action(2,5,3,4));
+        System.out.println(j);
+        Iterator<Action> ji = j.iterator();
+        while(ji.hasNext()){
+            if(ji.next().isForwardMove()) {
+                ji.remove();
+                break;
+    
+            }
+        }
+        Action ak = new Action(2,5,2,4); 
+        System.out.println(ak);
+        System.out.println(j);
+
         System.out.println(someState);
     }
 }
