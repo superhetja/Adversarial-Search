@@ -92,6 +92,17 @@ public class State2 implements Cloneable {
     }
 
     public void delete_pawn(Pawn p) {
+        HashMap<Pawn, ArrayList<Action>> map = p.is_white? whiteMap : blackMap;
+        int pawn_shift = p.is_white? 1 : -1;
+
+        ArrayList<Action> tmp_action;
+
+        for (int x = -1; x <= 1 ; x++) {
+            for (int y = -1; y <= 1; y++) {
+                
+            }
+        }
+
         whiteMap.remove(p);
         blackMap.remove(p);
     }

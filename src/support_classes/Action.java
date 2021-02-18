@@ -104,4 +104,9 @@ public class Action {
         }return false;
     }
 
+    public boolean equals(Object o) {
+        Action a = (Action)o;
+        return (a.x1 == x1) && (a.x2 == x2) && (a.y1 == y1) && (a.y2 == y2);
+    }
+
 }
