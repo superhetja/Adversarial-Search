@@ -99,12 +99,30 @@ public class State2 implements Cloneable {
 
         for (int x = -1; x <= 1 ; x++) {
             for (int y = -1; y <= 1; y++) {
-                
+                tmp_action = getPawnAction(p.x+x, p.y+y);
+
+                if(tmp_action != null){
+                    //if in same line and same color than that pawn can now move forward..
+                    if(x == 0 && (p.is_white? checkWhite(p.x+x, p.y+y): checkBlack(p.x+x, p.y+y))) {
+                        tmp_action.add(new Action(p.x+x, p.y+y, p.x, p.y));
+                    }
+                    else if (x != 0 && y != 0 && (p.is_white? checkBlack(p.x+x, p.y+y): checkWhite(p.x+x, p.y+y))) {
+                        Iterator<Action> itr = tmp_action.iterator();
+                        while(itr.hasNext()) {
+                            Action move = itr.next();
+                            if(move.x2 == p.x && move.y2 == p.y && (move.isDiagonalLeft() || move.isDiagonalRight() )) {
+                                itr.remove();
+                            }
+
+                        }
+                    }
+
+
+                }
             }
         }
 
-        whiteMap.remove(p);
-        blackMap.remove(p);
+        map.remove(p);
     }
 
 
@@ -144,8 +162,6 @@ public class State2 implements Cloneable {
                         }
                     } else if ( (y != 0) && (x == pawn_shift) && (p.is_white? checkBlack(p.x+x, p.y+y): checkWhite(p.x+x, p.y+y)) ) {
                         // if not in same row, and is in front of me and is not in my team  then add move to me and that pawn
-                        System.out.println("About to add another move!");
-                        System.out.println("x: " + x + " y: " + y + " p.iswhite: " + p.is_white + " checkBlack: " + checkBlack(p.x+y, p.y+y) + " pawnShift: " +  pawn_shift);
                         a.add(new Action(p.x,p.y, p.x+x, p.y+y));
                         tmp_action.add(new Action(p.x+x, p.y+y, p.x, p.y));
 
@@ -209,6 +225,7 @@ public class State2 implements Cloneable {
         Pawn oldPawn = new Pawn(2,2,true);
         Pawn newPawn = new Pawn(2,3,true);
         ArrayList<Action> a = new ArrayList<Action>();
+        // should add [(move 2 1 2 2)]
         someState.delete_pawn(oldPawn);
         //should remove [(move 2 2 2 3)] and add [(move 2 3 2 4)]
         someState.add_pawn(newPawn);
