@@ -96,7 +96,7 @@ public class State2 implements Cloneable {
     }
 
 
-    public void add_pawn(Pawn p, ArrayList<Action> act){
+    public void add_pawn(Pawn p){
         HashMap<Pawn, ArrayList<Action>> map = p.is_white? whiteMap : blackMap;
         int pawn_shift = p.is_white? 1:-1;
         // we have:
@@ -125,12 +125,15 @@ public class State2 implements Cloneable {
                             // ok if the move is forward move
                             // and the x2,y2 coordinates of the move are same as py then remove.
                             // i thing all of the condition except for y2 == y will always be true..
-                            if(ji.next().isForwardMove() && ji.next().x2 == p.x && ji.next().y2 == p.y) {
+                            Action move = ji.next();
+                            if(move.isForwardMove() && move.x2 == p.x && move.y2 == p.y) {
                                 ji.remove();
                             }
                         }
-                    } else if (y != 0 && x == pawn_shift && p.is_white? checkBlack(p.x+x, p.y+y): checkWhite(p.x+x, p.y+y)) {
+                    } else if ( (y != 0) && (x == pawn_shift) && (p.is_white? checkBlack(p.x+x, p.y+y): checkWhite(p.x+x, p.y+y)) ) {
                         // if not in same row, and is in front of me and is not in my team  then add move to me and that pawn
+                        System.out.println("About to add another move!");
+                        System.out.println("x: " + x + " y: " + y + " p.iswhite: " + p.is_white + " checkBlack: " + checkBlack(p.x+y, p.y+y) + " pawnShift: " +  pawn_shift);
                         a.add(new Action(p.x,p.y, p.x+x, p.y+y));
                         tmp_action.add(new Action(p.x+x, p.y+y, p.x, p.y));
 
@@ -193,31 +196,19 @@ public class State2 implements Cloneable {
         Pawn oldPawn = new Pawn(2,2,true);
         Pawn newPawn = new Pawn(2,3,true);
         ArrayList<Action> a = new ArrayList<Action>();
-        a.add(new Action(2,3,2,4));
-        someState.add_pawn(newPawn, a);
-
         someState.delete_pawn(oldPawn);
+        //should remove [(move 2 2 2 3)] and add [(move 2 3 2 4)]
+        someState.add_pawn(newPawn);
         System.out.println(someState);
+        oldPawn = new Pawn(3,5, false);
+        newPawn = new Pawn(3,4, false);
+        someState.delete_pawn(oldPawn);
+        someState.add_pawn(newPawn);
+ 
 
-        ArrayList<Action> k = someState.getPawnAction(2,1);
-        k.add(new Action(2,1,2,2));
-        System.out.println(k);
-        ArrayList<Action> j = someState.getPawnAction(2,5);
-        System.out.println(j);
-        j.add(new Action(2,5,3,4));
-        System.out.println(j);
-        Iterator<Action> ji = j.iterator();
-        while(ji.hasNext()){
-            if(ji.next().isForwardMove()) {
-                ji.remove();
-                break;
-    
-            }
-        }
-        Action ak = new Action(2,5,2,4); 
-        System.out.println(ak);
-        System.out.println(j);
+
 
         System.out.println(someState);
+
     }
 }
