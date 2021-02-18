@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * State keeps track of pawns position
  * Fills in the board on initialization
  */
-public class State2 implements Cloneable {
+public class State implements Cloneable {
 
     //public Map<Integer, HashMap<Integer, Pawn>>whiteMap, blackMap;//map.get(x).get(y) -> pawn.
     public boolean whites_turn; // How's turn is it?
@@ -22,13 +22,13 @@ public class State2 implements Cloneable {
      */
     public int width,height;
     
-    public State2() {
+    public State() {
         whiteMap = new HashMap<Pawn, ArrayList<Action>>();
         blackMap = new HashMap<Pawn, ArrayList<Action>>();
     }
 
 
-    public State2(int width, int height){
+    public State(int width, int height){
         whiteMap = new HashMap<Pawn, ArrayList<Action>>();
         blackMap = new HashMap<Pawn, ArrayList<Action>>();
         this.width = width;
@@ -184,8 +184,8 @@ public class State2 implements Cloneable {
     
 
     @SuppressWarnings("unchecked") 
-    public State2 clone(){
-        State2 cloned = new State2();
+    public State clone(){
+        State cloned = new State();
         cloned.whiteMap = copy(whiteMap);
         cloned.blackMap = copy(blackMap);
         cloned.width = width;
@@ -220,7 +220,7 @@ public class State2 implements Cloneable {
         return copy;
     }
     public static void main(String[] args){
-        var someState= new State2(5,6);
+        var someState= new State(5,6);
         System.out.println(someState);
         Pawn oldPawn = new Pawn(2,2,true);
         Pawn newPawn = new Pawn(2,3,true);

@@ -15,7 +15,7 @@ public class Environment {
     /**
      * Current state of the game
      */
-    private State2 currentState;
+    private State currentState;
 
 
     /**
@@ -32,7 +32,7 @@ public class Environment {
     public Environment(int width, int height){
         this.width = width;
         this.height = height;
-        this.currentState = new State2(this.width, this.height);
+        this.currentState = new State(this.width, this.height);
     }
 
 
@@ -51,7 +51,7 @@ public class Environment {
      * Returns current state
      * @return current state
      */
-    public State2 getCurrentState(){
+    public State getCurrentState(){
         return this.currentState;
     }
 
@@ -61,7 +61,7 @@ public class Environment {
      * @param   color   boolean color to search for
      * @return  Iterator of Actions.
      */
-    public Iterator<Action> legalMoves(State2 state, boolean color){
+    public Iterator<Action> legalMoves(State state, boolean color){
         Iterator<Action> iterrer = new Iterator<Action>(){
             Iterator<ArrayList<Action>> actList = color? state.whiteMap.values().iterator() : state.blackMap.values().iterator();
             Iterator<Action> actions = actList.next().iterator();
@@ -88,7 +88,7 @@ public class Environment {
      * @param state
      * @return  
      */
-    public boolean isTerminalState(State2 state) { 
+    public boolean isTerminalState(State state) { 
         // if it is whites turn then black just did so we need to check wether that move but him to the end.
         Iterator<Pawn> pawns = state.whites_turn ? state.blackMap.keySet().iterator() : state.whiteMap.keySet().iterator();
         int edge = state.whites_turn? 0 : height;
@@ -118,8 +118,8 @@ public class Environment {
         this.currentState = getNextState(this.currentState, lastMove);
     }
 
-    public State2 getNextState(State2 state, Action lastMove) {
-        State2 new_state = state.clone();
+    public State getNextState(State state, Action lastMove) {
+        State new_state = state.clone();
         new_state.whites_turn = !new_state.whites_turn;
         if (!lastMove.isForwardMove()){
             new_state.delete_pawn(new Pawn(lastMove.x2, lastMove.y2, !lastMove.isWhite()));
