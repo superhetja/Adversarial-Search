@@ -167,27 +167,12 @@ public class Environment {
 
     public State2 getNextState2 (State2 state, Action lastMove) {
         State2 new_state = state.clone();
-        ArrayList<Action> a = new ArrayList<Action>();
-        Boolean is_white = lastMove.isWhite();
-        int pawn_shift = is_white? 1 : -1;
-        new_state.delete_pawn(lastMove.x1, lastMove.y1,is_white);
-
-
-        if(is_white?new_state.checkWhite(lastMove.x1,lastMove.y1+(pawn_shift*-1)): new_state.checkBlack(lastMove.x1, lastMove.y1+(pawn_shift*-1))){
-            ArrayList<Action> pawnsactions = new_state.getPawnAction(lastMove.x1, (lastMove.y1)+(pawn_shift*-1)); // *-1 because we are getting the pawn behind
-            pawnsactions.add(new Action(lastMove.x1, (lastMove.y1)+(pawn_shift*-1), lastMove.x1, lastMove.y1));
+        new_state.whites_turn = !new_state.whites_turn;
+        if (!lastMove.isForwardMove()){
+            new_state.delete_pawn(new Pawn(lastMove.x2, lastMove.y2, !lastMove.isWhite()));
         }
-
-        if (lastMove.isForwardMove()){
-            // check if any of same color behind moved pawn.
-            if(is_white?new_state.checkBlack(lastMove.x2+1, lastMove.y2):new_state.checkWhite(lastMove.x2+1, lastMove.y2)){
-                
-            }
-
-
-        }
-        new_state.add_pawn(new Pawn(lastMove.x2, lastMove.y2, is_white), a);
-
+        new_state.delete_pawn(new Pawn(lastMove.x1, lastMove.y1, lastMove.isWhite()));
+        new_state.add_pawn(new Pawn(lastMove.x2, lastMove.y2, lastMove.isWhite()));
         return new_state;
     }
 
