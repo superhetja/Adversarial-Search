@@ -1,6 +1,7 @@
 import java.util.Iterator;
 import java.util.List;
 import java.util.Arrays;
+import java.util.ArrayList;
 
 import support_classes.*;
 
@@ -14,6 +15,8 @@ public class Environment {
      * Current state of the game
      */
     private State currentState;
+
+    private State2 s2;
 
 
     /**
@@ -31,6 +34,7 @@ public class Environment {
         this.width = width;
         this.height = height;
         this.currentState = new State(this.width, this.height);
+        this.s2 = new State2(this.width, this.height);
 
     }
 
@@ -52,6 +56,9 @@ public class Environment {
      */
     public State getCurrentState(){
         return this.currentState;
+    }
+    public State2 getCurrentState2(){
+        return this.s2;
     }
 
 
@@ -85,27 +92,25 @@ public class Environment {
         return iterrer;
     }
 
-    public Iterator<Action> legalMoves2(State state, boolean color){
+    public Iterator<Action> legalMoves2(State2 state, boolean color){
         Iterator<Action> iterrer = new Iterator<Action>(){
-            Iterator<Pawn> pawns = color?state.whitePawns.iterator():state.blackPawns.iterator();
-            Iterator<Action> actions = null;
+            Iterator<ArrayList<Action>> actList = color? state.whiteMap.values().iterator() : state.blackMap.values().iterator();
+            Iterator<Action> actions = actList.next().iterator();
             public boolean hasNext()
             {
-                //TODO: why !action.hasNext()... it throw exception...
-                //while (!actions.hasNext()&&pawns.hasNext())
-                while (pawns.hasNext())
-                {
-                    if (!color){
-                        System.out.println(pawns);
-                    }
-                    actions = pawns.next().moves.iterator();
+                while (!actions.hasNext() && actList.hasNext()) {
+                    actions = actList.next().iterator();
                 }
+
                 return actions.hasNext();
+
             }
 
             public Action next()
             {
+                    
                 return actions.next();
+                
             }
         };
         return iterrer;
@@ -146,16 +151,52 @@ public class Environment {
     }
     
 
+    /**
+     * updates the current state based on last Move
+     * @param lastMove
+     */
     public void updateState(Action lastMove){
         System.out.println("Before update: " + this.currentState);
         this.currentState = getNextState(this.currentState, lastMove);
         System.out.println("After update: " + this.currentState);
     }
 
+    public void updateState2(Action lastMove){
+        this.s2 = getNextState2(this.s2, lastMove);
+    }
 
-    /*
-        return a copy of the given state 
-    */
+    public State2 getNextState2 (State2 state, Action lastMove) {
+        State2 new_state = state.clone();
+        ArrayList<Action> a = new ArrayList<Action>();
+        Boolean is_white = lastMove.isWhite();
+        int pawn_shift = is_white? 1 : -1;
+        new_state.delete_pawn(lastMove.x1, lastMove.y1,is_white);
+
+
+        if(is_white?new_state.checkWhite(lastMove.x1,lastMove.y1+(pawn_shift*-1)): new_state.checkBlack(lastMove.x1, lastMove.y1+(pawn_shift*-1))){
+            ArrayList<Action> pawnsactions = new_state.getPawnAction(lastMove.x1, (lastMove.y1)+(pawn_shift*-1)); // *-1 because we are getting the pawn behind
+            pawnsactions.add(new Action(lastMove.x1, (lastMove.y1)+(pawn_shift*-1), lastMove.x1, lastMove.y1));
+        }
+
+        if (lastMove.isForwardMove()){
+            // check if any of same color behind moved pawn.
+            if(is_white?new_state.checkBlack(lastMove.x2+1, lastMove.y2):new_state.checkWhite(lastMove.x2+1, lastMove.y2)){
+                
+            }
+
+
+        }
+        new_state.add_pawn(new Pawn(lastMove.x2, lastMove.y2, is_white), a);
+
+        return new_state;
+    }
+
+    /**
+     * Moves the pawns on the current state
+     * @param state     the state to move from
+     * @param lastMove  move to preform
+     * @return copy of state after move
+     */
     public State getNextState (State state, Action lastMove) {
         
 
@@ -166,7 +207,7 @@ public class Environment {
             *whatever pawn that was in (x1,y1) must be moved to (x2,y2)
             *every pawn in affected coordinates must have their actions updated
         */
-        State newState = state;
+        State newState = state.clone();
         Pawn currentPawn = state.getPawn(lastMove.x1, lastMove.y1); // getting current pawn
         boolean color = currentPawn.is_white;  // lastMove type Action
         if(lastMove.x1!=lastMove.x2)//killer move
@@ -413,8 +454,11 @@ public class Environment {
         return newState;
     }
 
+    /**
+     * String representation of the current state.
+     */
     public String toString() {
-        return this.currentState.toString();    
+        return this.s2.toString();    
     }
     public static void main(String[] args){
         /*
@@ -425,13 +469,25 @@ public class Environment {
         long duration = (endTime - startTime);  //divide by 1000000 to get milliseconds.
         */
 
-        var env = new Environment(200,40);
+        var env = new Environment(5,6);
+        System.out.println(env);
+        
+        env.updateState2(new Action(2,2,2,3));
+        
+        System.out.println(env);
+        
+        env.updateState2(new Action(5,5,5,4));
+        
+        System.out.println(env);
+
+        /*
+
         System.out.println("Start timer!");
         long startTime = System.nanoTime();
         Boolean lm = env.isTerminalState(env.getCurrentState());
         long endTime = System.nanoTime();
 
-
+*/
         //System.out.println(env.currentState);
         /*
         Iterator<Action> actions = env.legalMoves(env.currentState,true);
