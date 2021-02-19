@@ -122,9 +122,13 @@ public class Environment {
         State new_state = state.clone();
         new_state.whites_turn = !new_state.whites_turn;
         if (!lastMove.isForwardMove()){
+            System.out.println("\n Deleting other pawn: ");
             new_state.delete_pawn(new Pawn(lastMove.x2, lastMove.y2, !lastMove.isWhite()));
         }
+        
+        System.out.println("\n Deleting my pawn: ");
         new_state.delete_pawn(new Pawn(lastMove.x1, lastMove.y1, lastMove.isWhite()));
+        System.out.println("\n Adding my: ");
         new_state.add_pawn(new Pawn(lastMove.x2, lastMove.y2, lastMove.isWhite()));
         return new_state;
     }
@@ -148,14 +152,68 @@ public class Environment {
         var env = new Environment(4,4);
         System.out.println(env);
         
-        env.updateState(new Action(2,2,1,3));
-
+        System.out.println("Doing move (2,2) --> (3,3):");
+        Action move = new Action(2,2,3,3);
+        env.updateState(move);
         System.out.println(env);
+
+        System.out.println("Doing move (4,4) --> (3,3):");
+        move = new Action(4,4,3,3);
+        env.updateState(move);
+        System.out.println(env);
+        
+        System.out.println("Doing move (2,1) --> (2,2):");
+        move = new Action(2,1,2,2);
+        env.updateState(move);
+        System.out.println(env);
+
+        System.out.println("Doing move (1,3) --> (2,2):");
+        move = new Action(1,3,2,2);
+        env.updateState(move);
+        System.out.println(env);
+        
+
+        System.out.println("Doing move (3,1) --> (2,2):");
+        move = new Action(3,1,2,2);
+        env.updateState(move);
+        System.out.println(env);
+
+        System.out.println("Doing move (2,3) --> (3,2):");
+        move = new Action(2,3,3,2);
+        env.updateState(move);
+        System.out.println(env);
+        
+        System.out.println("Doing move (2,4) --> (2,3):");
+        move = new Action(2,4,2,3);
+        env.updateState(move);
+        System.out.println(env);
+
+        System.out.println("Doing move (2,3) --> (1,2):");
+        move = new Action(2,3,1,2);
+        env.updateState(move);
+        System.out.println(env);
+
+        System.out.println("Doing move (2,2) --> (3,3):");
+        move = new Action(2,2,3,3);
+        env.updateState(move);
+        System.out.println(env);
+
+        System.out.println("Doing move (1,4) --> (1,3):");
+        move = new Action(1,4,1,3);
+        env.updateState(move);
+        System.out.println(env);
+
+        System.out.println("Doing move (4,1) --> (3,2):");
+        move = new Action(4,1,3,2);
+        env.updateState(move);
+        System.out.println(env);
+        
+        
+        
+
         
         //env.updateState(new Action(5,5,5,4));
         
-        System.out.println(env);
-        System.out.println(env.isTerminalState(env.getCurrentState()));
 
         /*
 
