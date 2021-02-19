@@ -122,13 +122,13 @@ public class Environment {
         State new_state = state.clone();
         new_state.whites_turn = !new_state.whites_turn;
         if (!lastMove.isForwardMove()){
-            System.out.println("\n Deleting other pawn: ");
+            // System.out.println("\n Deleting other pawn: ");
             new_state.delete_pawn(new Pawn(lastMove.x2, lastMove.y2, !lastMove.isWhite()));
         }
         
-        System.out.println("\n Deleting my pawn: ");
+        //System.out.println("\n Deleting my pawn: ");
         new_state.delete_pawn(new Pawn(lastMove.x1, lastMove.y1, lastMove.isWhite()));
-        System.out.println("\n Adding my: ");
+        // System.out.println("\n Adding my: ");
         new_state.add_pawn(new Pawn(lastMove.x2, lastMove.y2, lastMove.isWhite()));
         return new_state;
     }
