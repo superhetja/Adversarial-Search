@@ -1,121 +1,123 @@
-import java.util.Iterator;
-
 import support_classes.*;
+import java.util.Queue;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.lang.RuntimeException;
 
 public class AlphaBeta implements Search{
-    private int start_alpha;//Negative Infinity
-    private int start_beta;//Infinity
-    private Environment env;
-    private Heuristic heuristic;
-
-    public  AlphaBeta(Environment env, Heuristic heuristic) {
-        this.env = env;
-        this.heuristic = heuristic;
-    }
-    
-    public boolean isTerminal(State s)
+    private class Node
     {
-        return false;
-    }
-
-    public Action doSearch(State state, boolean color)
-    {
-        int score = 1<<31;//negative infinity
-        if (!color)
-            score = ~score;
-        Action action;
-        Action best = null;
-        int ret;
-        int depth = 2;
-        Iterator<Action> actions;
-        if (isTerminal(state))
-            return null;
-        try{
-            while (true)
-            {
-                actions = env.legalMoves(state, color);
-                while (actions.hasNext())
-                {
-                    action = actions.next();
-                    ret = rec_search(env.getNextState(state, action), depth, start_alpha, start_beta, !color);
-                    if (ret>score)
-                    {
-                        best = action;
-                        score = ret;
-                    }
-                }
-                depth++;
-            }
-        }
-        catch(Exception e)
+        Action bestAction;
+        Node parent;
+        State state;
+        public Node(Node parent, State state)
         {
-            return best;
+            this.bestAction = null;
+            this.parent = parent;
+            this.state = state;
         }
-    }
-
-    private int rec_search(State state, int depth, int a, int b, boolean color)
-    {
-        if((depth == 0) || isTerminal(state))
-        {
-            return heuristic.eval(state);
-        }
-        if (color)
-        {
-            int ret; int value = color?start_alpha:start_beta;
-            Action action; Iterator<Action> actions = env.legalMoves(state, color);
-            while (actions.hasNext())
-            {
-                action = actions.next();
-                ret = rec_search(env.getNextState(state, action), depth-1,a,b, !color);
-                value = value<ret?ret:value;
-                a = a<ret?ret:a;
-                if (a>=b)
-                {
-                    break;
-                }
-            }
-            return value;
-        }
-        else
-        {
-            int ret; int value = color?start_alpha:start_beta;
-            Action action; Iterator<Action> actions = env.legalMoves(state, color);
-            while (actions.hasNext())
-            {
-                action = actions.next();
-                ret = rec_search(env.getNextState(state, action), depth-1,a,b, !color);
-                value = value<ret?value:ret;
-                a = a<ret?a:ret;
-                if (b<=a)
-                {
-                    break;
-                }
-            }
-            return value;
+        public void UpdateBestAction(Action a){
+            this.bestAction= a;
         }
         
-    }
-}
-/*
-public class AlphaBeta implements Pruning{
-    private int start_alpha;//Negative Infinity
-    private int start_beta;//Infinity
-    private Environment env;
+        public Node expand(Action action)
+        {   
+            State s = env.getNextState(this.state, action);
+            return new Node(this, s);
+        }
 
-    public  AlphaBeta(Environment env, Heuristic heuristic) {
-        this.env = env;
-        this.heuristic = heuristic;
     }
-    public void init(Environment env)
+    Environment env;
+    Heuristic her;
+    Pruning pruning;
+    long starting;
+    Date clock = new Date();
+    long time_padding = 1000, start_time;
+    int max_time;
+
+    public AlphaBeta(Environment env, Heuristic heuristic, int max_time)
     {
         this.env = env;
-        start_alpha = 1<<31;//Negative Infinity
-        start_beta = ~start_alpha;//Infinity
+        this.her = heuristic;
+        her.init(env);
+        this.max_time = max_time;
     }
-    public boolean cut_off();
-    public Pruning passing();
-    public void backing();
     
-}
+    public Action doSearch(State state, boolean is_white)
+    {
+        start_time = System.currentTimeMillis();
+        Node root = new Node(null, state);
+        int depth = 1;
+        while(true){
+            try{
+                alphaBeta(root, depth, -Integer.MAX_VALUE, Integer.MAX_VALUE);
+            } catch(RuntimeException e) {
+                break;
+            }
+            depth++;
+        }
+        return root.bestAction;
+        
+    }
+    private int alphaBeta(Node node, int depth, int alpha, int beta) {
+        int value, tmpval;
+        Node child;
+        Action action;
+        Iterator<Action> moves = env.legalMoves(node.state, node.state.whites_turn);
+        if (max_time-1<(System.currentTimeMillis()-start_time)/ 1000F) {
+            throw new RuntimeException("Out of time");
+        }
+        if ((env.isTerminalState(node.state)|(depth==0))){ //Don't go too deep
+            return her.eval(node.state);
+        }
+        if (node.state.whites_turn){ // maximizing
+            value = -Integer.MAX_VALUE;
+            while(moves.hasNext()){
+                action=moves.next();
+                child= node.expand(action);
+                tmpval = alphaBeta(child, depth-1, alpha, beta);
 
-*/
+                if ( tmpval>alpha){
+                    alpha = tmpval;
+                    node.UpdateBestAction(action);
+                }
+                if (alpha>=beta) {
+                    break;
+                }
+                
+            }
+        } else { // minimizing
+            value = Integer.MAX_VALUE;
+            while(moves.hasNext()){
+                action=moves.next();
+                child= node.expand(action);
+                tmpval = alphaBeta(child, depth-1, alpha, beta);
+                if ( tmpval<beta){
+                    beta = tmpval;
+                    node.UpdateBestAction(action);
+                }
+                if (alpha>=beta) {
+                    break;
+                }
+            }
+        }
+        return value;
+    }
+
+    public static void main(String[] args){
+        Environment env = new Environment(3, 5);
+        Search s = new AlphaBeta(env, new SimpleHeuristics(), 5);
+        long time = System.currentTimeMillis();
+        Action ret = s.doSearch(env.getCurrentState(), true);
+        System.out.println((time-System.currentTimeMillis())/1000F);
+        while (!env.isTerminalState(env.getCurrentState())){
+            System.out.println(env.getCurrentState().toString());
+            System.out.println("Best Action: "+ret);
+            env.updateState(ret);
+            ret = s.doSearch(env.getCurrentState(), true);
+        }
+
+    }
+}
