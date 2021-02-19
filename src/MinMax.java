@@ -34,7 +34,7 @@ public class MinMax implements Search{
     Pruning pruning;
     long starting;
     Date clock = new Date();
-    long time_padding = 1000;
+    long time_padding = 1000, start_time;
     int max_time;
     Queue<MinMax.Node> frontier = new LinkedList<MinMax.Node>();
     public MinMax(Environment env, Heuristic heuristic, int max_time)
@@ -47,20 +47,27 @@ public class MinMax implements Search{
     
     public Action doSearch(State state, boolean is_white)
     {
-        Action bestAction= null;
-        int bestValue= state.whites_turn?-Integer.MAX_VALUE:Integer.MAX_VALUE; 
-        int tmpValue;
-        Action action;
-        State tmpState;
+        start_time = System.currentTimeMillis();
         Node root = new Node(null, state);
-    	minmax(root, 5);
-        return root.bestAction;
+        int depth = 1;
+        try {
+            while(true){
+                minmax(root, depth);
+                depth++;
+            }
+        } catch(RuntimeException e) {
+            return root.bestAction;
+        }
+        
     }
     private int minmax(Node node, int depth) {
         int value, tmpval;
         Node child;
         Action action;
         Iterator<Action> moves = env.legalMoves(node.state, node.state.whites_turn);
+        if (max_time-time_padding<System.currentTimeMillis()-start_time) {
+            throw new RuntimeException("Out of time");
+        }
         if ((env.isTerminalState(node.state)|(depth==0))){ //Don't go too deep
             return her.eval(node.state);
         }
