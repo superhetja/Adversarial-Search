@@ -38,7 +38,7 @@ public class AlphaBeta implements Search{
         this.max_time = max_time;
     }
 
-    public Action doSearch(State state)
+    public Action doSearch(State state, boolean is_white)
     {
         Ret anchor = new Ret(null, start_alpha, true);
         Ret ret;
@@ -96,7 +96,7 @@ public class AlphaBeta implements Search{
     public static void main(String[] args){
         Environment env = new Environment(4, 4);
         Search s = new AlphaBeta(env, new SimpleHeuristics(), (long)~(1<<63));
-        Action ret = s.doSearch(env.getCurrentState());
+        Action ret = s.doSearch(env.getCurrentState(), false);
         System.out.println("this thing: "+ret);
         
     }
