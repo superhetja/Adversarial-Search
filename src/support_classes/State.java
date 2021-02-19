@@ -157,7 +157,7 @@ public class State implements Cloneable {
                                 ji.remove();
                             }
                         }
-                    } else if ( (y != 0) && (x == pawn_shift) && (p.is_white? checkBlack(p.x+x, p.y+y): checkWhite(p.x+x, p.y+y)) ) {
+                    } else if ( (y == pawn_shift) && (p.is_white? checkBlack(p.x+x, p.y+y): checkWhite(p.x+x, p.y+y)) ) {
                         // if not in same row, and is in front of me and is not in my team  then add move to me and that pawn
                         a.add(new Action(p.x,p.y, p.x+x, p.y+y));
                         tmp_action.add(new Action(p.x+x, p.y+y, p.x, p.y));
@@ -229,8 +229,19 @@ public class State implements Cloneable {
         System.out.println(someState);
         oldPawn = new Pawn(3,5, false);
         newPawn = new Pawn(3,4, false);
+        //should add [(move 3 6 3 5)]
         someState.delete_pawn(oldPawn);
         someState.add_pawn(newPawn);
+        System.out.println(someState);
+        
+        oldPawn = new Pawn(2,3, true);
+        newPawn = new Pawn(2,4, true);
+        //Should remove (move 3 4 2 3)
+        someState.delete_pawn(oldPawn);
+        // Sould remove (move 2 5 2 4) add move (move 1 5 2 4) and add move(2 4 1 5)
+        someState.add_pawn(newPawn);
+
+    
  
         System.out.println(someState);
 
