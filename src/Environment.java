@@ -145,14 +145,14 @@ public class Environment {
         long duration = (endTime - startTime);  //divide by 1000000 to get milliseconds.
         */
 
-        var env = new Environment(5,6);
+        var env = new Environment(4,4);
         System.out.println(env);
         
-        env.updateState(new Action(2,2,2,3));
+        env.updateState(new Action(2,2,1,3));
 
         System.out.println(env);
         
-        env.updateState(new Action(5,5,5,4));
+        //env.updateState(new Action(5,5,5,4));
         
         System.out.println(env);
         System.out.println(env.isTerminalState(env.getCurrentState()));

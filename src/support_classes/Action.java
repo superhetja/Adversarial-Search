@@ -33,7 +33,11 @@ public class Action {
         this.x1 = coords[0]; this.y1 = coords[1];
         this.x2 = coords[2]; this.y2 = coords[3];
     }
-
+/*
+    private checkAndSetCoords(int x1, int y1, int x2, int y2) {
+        if (x)
+    }
+*/
     /**
      * Returns the from coordinates in int[]
      * @return  int[] of [x1,y1]
