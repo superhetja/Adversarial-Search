@@ -15,6 +15,22 @@ public class Action {
     public int[] start(){return new int[]{x1,y1};}
     public int[] end(){return new int[]{x2,y2};}
 
+    public boolean isForwardMove(){
+        return x1 == x2;
+    }
+
+    public boolean isDiagonalLeft(){
+        return (y1< y2 && x1 > x2) || (y1 > y2 && x1 < x2);
+    }
+
+    public boolean isDiagonalRight(){
+        return (y1 < y2 && x1 < x2) || (y1 > y2 && x1 > x2);
+    }
+
+    public boolean isWhite(){
+        return y1 < y2;
+    }
+
     public String toString()
     {
         return "(move " + x1 + " " + y1 + " " + x2 + " " + y2 + ")";
