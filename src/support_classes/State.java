@@ -44,14 +44,14 @@ public class State implements Cloneable {
                 {
                     if(height==4)//diagonal kill actions
                     {
-                        if(x<width)
+                        if(x<width) //right
                         {
                             whiteMap.get(wPawn).add(new Action(x,y,x+1,y+1));
                             blackMap.get(bPawn).add(new Action(x,bY, x+1, bY-1));
                         }
-                        if(x>1)
+                        if(x>1) //left
                         {
-                            whiteMap.get(wPawn).add(new Action(x,y,x+1,y-1));
+                            whiteMap.get(wPawn).add(new Action(x,y,x-1,y+1));
                             blackMap.get(bPawn).add(new Action(x,bY,x-1,bY-1));
                         }
                     }
