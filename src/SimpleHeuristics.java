@@ -29,29 +29,34 @@ public class SimpleHeuristics implements Heuristic {
             Time complexety: O(number of pawns)
         
         */
-        Iterator<Pawn> white_pawns = state.whitePawns.iterator();
-        Iterator<Pawn> black_pawns = state.blackPawns.iterator();
+        Iterator<Pawn> white_pawns = state.whiteMap.keySet().iterator();
+        Iterator<Pawn> black_pawns = state.blackMap.keySet().iterator();
         int abp= this.env.getHeigth(), awp= 1; //  Most advanced black/white pawn
-        boolean tie=true; // Tie if whos turn it is has nolegal moves
-        Pawn tmpPawn;
-        
+        Pawn pawn;
+
+        // Find most advanced white pawn
         while(white_pawns.hasNext()){
-            tmpPawn = white_pawns.next();
-            awp = tmpPawn.y>awp? tmpPawn.y: awp;
-            if (state.whites_turn){
-                tie = tmpPawn.moves.size()!= 0? false: tie;
+            pawn= white_pawns.next();
+            if(pawn.y >awp){
+                awp= pawn.y;
             }
         }
+        // Find most advanced blackpawn
         while(black_pawns.hasNext()){
-            tmpPawn = black_pawns.next();
-            abp = tmpPawn.y<abp? tmpPawn.y: abp;
-            if (!state.whites_turn){
-                tie = tmpPawn.moves.size()!= 0? false: tie;
+            pawn= black_pawns.next();
+            if(pawn.y <abp){
+                abp= pawn.y;
             }
         }
-        if (tie) {
+
+        //check for tie
+        // Tie if whos turn it is has nolegal moves
+
+        Iterator<Action> moves = env.legalMoves(state, state.whites_turn);
+        if (!moves.hasNext()){
             return 0;
-        } else if (awp== this.env.getHeigth()){
+        }
+        if (awp== this.env.getHeigth()){
             return 100;
         } else if (abp == 1) {
             return -100;
