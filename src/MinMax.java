@@ -14,7 +14,7 @@ public class MinMax implements Search{
         State state;
         public Node(Node parent, State state)
         {
-            this.bestAction = null;
+            this.bestAction = new Action(1,1,1,1);
             this.parent = parent;
             this.state = state;
         }
@@ -65,7 +65,7 @@ public class MinMax implements Search{
         Node child;
         Action action;
         Iterator<Action> moves = env.legalMoves(node.state, node.state.whites_turn);
-        if (max_time-time_padding<System.currentTimeMillis()-start_time) {
+        if (max_time-time_padding/ 1000F<(System.currentTimeMillis()-start_time)/ 1000F) {
             throw new RuntimeException("Out of time");
         }
         if ((env.isTerminalState(node.state)|(depth==0))){ //Don't go too deep
@@ -99,15 +99,20 @@ public class MinMax implements Search{
     }
 
     public static void main(String[] args){
-        Environment env = new Environment(4, 4);
-        Search s = new MinMax(env, new SimpleHeuristics(), 50000);
+        Environment env = new Environment(3, 5);
+        Search s = new MinMax(env, new SimpleHeuristics(), 5);
+        long time = System.currentTimeMillis();
         Action ret = s.doSearch(env.getCurrentState(), true);
+        System.out.println((time-System.currentTimeMillis())/1000F);
+        System.out.println(env.getCurrentState().toString());
         System.out.println("Best Action: "+ret);
         env.updateState(ret);
         ret = s.doSearch(env.getCurrentState(), true);
+        System.out.println(env.getCurrentState().toString());
         System.out.println("Best Action: "+ret);
         env.updateState(ret);
         ret = s.doSearch(env.getCurrentState(), true);
+        System.out.println(env.getCurrentState().toString());
         System.out.println("Best Action: "+ret);
 
     }
