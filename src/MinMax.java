@@ -14,7 +14,7 @@ public class MinMax implements Search{
         State state;
         public Node(Node parent, State state)
         {
-            this.bestAction = new Action(1,1,1,1);
+            this.bestAction = null;
             this.parent = parent;
             this.state = state;
         }
@@ -50,14 +50,15 @@ public class MinMax implements Search{
         start_time = System.currentTimeMillis();
         Node root = new Node(null, state);
         int depth = 1;
-        try {
-            while(true){
+        while(true){
+            try{
                 minmax(root, depth);
-                depth++;
+            } catch(RuntimeException e) {
+                break;
             }
-        } catch(RuntimeException e) {
-            return root.bestAction;
+            depth++;
         }
+        return root.bestAction;
         
     }
     private int minmax(Node node, int depth) {
@@ -65,7 +66,7 @@ public class MinMax implements Search{
         Node child;
         Action action;
         Iterator<Action> moves = env.legalMoves(node.state, node.state.whites_turn);
-        if (max_time-time_padding/ 1000F<(System.currentTimeMillis()-start_time)/ 1000F) {
+        if (max_time-1<(System.currentTimeMillis()-start_time)/ 1000F) {
             throw new RuntimeException("Out of time");
         }
         if ((env.isTerminalState(node.state)|(depth==0))){ //Don't go too deep
