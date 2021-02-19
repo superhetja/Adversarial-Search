@@ -2,12 +2,12 @@ import support_classes.*;
 
 import java.util.*;
 
-public class EnvironmentTests {
+public class ActionsTests {
     Environment env;
     int x;
     int y;
 
-    public EnvironmentTests(int x,int y){
+    public ActionsTests(int x,int y){
         this.x = x;
         this.y = y;
         this.env = new Environment(x,y);
@@ -181,7 +181,7 @@ public class EnvironmentTests {
     }
 
     public static void main(String[] args){
-        EnvironmentTests tests = new EnvironmentTests(4,5);
+        ActionsTests tests = new ActionsTests(4,5);
         Environment env = tests.env;
 
         // PLAN - ARE CORRECT ACTIONS UPDATING IN AFFECTED PAWNS?
