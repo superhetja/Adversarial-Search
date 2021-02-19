@@ -1,3 +1,7 @@
+import java.util.ArrayList;
+
+import javax.swing.Action;
+
 public class test {
 
     public static void main(String  args[]){
@@ -11,6 +15,9 @@ public class test {
             }
 
         }
+        ArrayList<Action> a = new ArrayList<Action>();
+        boolean k = a.iterator().hasNext();
+        System.out.println(k);
         
     }
     
