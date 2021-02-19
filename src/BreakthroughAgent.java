@@ -29,13 +29,7 @@ public class BreakthroughAgent implements Agent{
      * Searching something....
      * 
      */
-    private Search searching = new MinMax(env, new SimpleHeuristics(), this.playclock){
-        public void init(Environment e){};
-        public int eval(State s)
-        {
-            return 1;
-        }
-    };
+    private Search searching;
 
     /**
      * Called once before the first action.
@@ -51,6 +45,7 @@ public class BreakthroughAgent implements Agent{
         color = role.equals("white");
         myTurn = !color; // changed in nextAction before each search 
         this.env = new Environment(width, height);
+        searching = new MinMax(env, new SimpleHeuristics(), this.playclock);
     }
 
     
