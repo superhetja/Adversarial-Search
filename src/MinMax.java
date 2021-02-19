@@ -9,22 +9,23 @@ import java.lang.RuntimeException;
 public class MinMax implements Search{
     private class Node
     {
-        Action action;
-        int value;
+        Action bestAction;
         Node parent;
         State state;
-        public Node(Action action,Node parent,int value, State state)
+        public Node(Node parent, State state)
         {
-            this.action = action;
+            this.bestAction = null;
             this.parent = parent;
-            this.value = value;
             this.state = state;
+        }
+        public void UpdateBestAction(Action a){
+            this.bestAction= a;
         }
         
         public Node expand(Action action)
         {   
             State s = env.getNextState(this.state, action);
-            return new Node(action, this, her.eval(s), s);
+            return new Node(this, s);
         }
 
     }
@@ -46,77 +47,60 @@ public class MinMax implements Search{
     
     public Action doSearch(State state, boolean is_white)
     {
-        
-        Iterator<Action> actions = env.legalMoves(state, state.whites_turn);
         Action bestAction= null;
         int bestValue= state.whites_turn?-Integer.MAX_VALUE:Integer.MAX_VALUE; 
         int tmpValue;
         Action action;
         State tmpState;
-        while(actions.hasNext()){
-            action= actions.next();
-            tmpState = env.getNextState(state, action);
-            tmpValue = minmax(new Node(action, null, 0, tmpState), 1);
-            if (state.whites_turn) {
-                if(bestValue<tmpValue)
-                {
-                    bestAction = action;
-                    bestValue = tmpValue;
-                }
-            }
-            else { // is blacks turn
-                if(bestValue>tmpValue)
-                {
-                    bestAction = action;
-                    bestValue = tmpValue;
-                }
-            }
-        }
-
-        return bestAction;
+        Node root = new Node(null, state);
+    	minmax(root, 5);
+        return root.bestAction;
     }
     private int minmax(Node node, int depth) {
         int value, tmpval;
         Node child;
+        Action action;
         Iterator<Action> moves = env.legalMoves(node.state, node.state.whites_turn);
-        if ((env.isTerminalState(node.state)|(depth>5))){ //Don't go too deep
+        if ((env.isTerminalState(node.state)|(depth==0))){ //Don't go too deep
             return her.eval(node.state);
         }
         if ((depth%2==0)&& node.state.whites_turn){ // maximizing
             value = -Integer.MAX_VALUE;
             while(moves.hasNext()){
-                child= node.expand(moves.next());
-                tmpval = minmax(child, depth+1);
-                value = tmpval>value?tmpval:value;
+                action=moves.next();
+                child= node.expand(action);
+                tmpval = minmax(child, depth-1);
+                if ( tmpval>value){
+                    value = tmpval;
+                    node.UpdateBestAction(action);
+                }
                 
             }
         } else { // minimizing
             value = Integer.MAX_VALUE;
             while(moves.hasNext()){
-                child= node.expand(moves.next());
-                tmpval = minmax(child, depth+1);
-                value = tmpval<value?tmpval:value;
+                action=moves.next();
+                child= node.expand(action);
+                tmpval = minmax(child, depth-1);
+                if ( tmpval<value){
+                    value = tmpval;
+                    node.UpdateBestAction(action);
+                }
             }
         }
         return value;
-    }
-
-
-
-    private int fastlog_2(int num)
-    {
-        int ret = 0;
-        while (num>1)
-        {
-            num=num>>1;
-        }
-        return ret;
     }
 
     public static void main(String[] args){
         Environment env = new Environment(4, 4);
         Search s = new MinMax(env, new SimpleHeuristics(), 50000);
         Action ret = s.doSearch(env.getCurrentState(), true);
+        System.out.println("Best Action: "+ret);
+        env.updateState(ret);
+        ret = s.doSearch(env.getCurrentState(), true);
+        System.out.println("Best Action: "+ret);
+        env.updateState(ret);
+        ret = s.doSearch(env.getCurrentState(), true);
         System.out.println("Best Action: "+ret);
 
     }
