@@ -64,9 +64,16 @@ public class Environment {
     public Iterator<Action> legalMoves(State state, boolean color){
         Iterator<Action> iterrer = new Iterator<Action>(){
             Iterator<ArrayList<Action>> actList = color? state.whiteMap.values().iterator() : state.blackMap.values().iterator();
-            Iterator<Action> actions = actList.next().iterator();
+            Iterator<Action> actions = null;
             public boolean hasNext()
             {
+                if (actions==null)
+                {
+                    if (actList.hasNext())
+                        actions = actList.next().iterator();
+                    else
+                        return false;
+                }
                 while (!actions.hasNext() && actList.hasNext()) {
                     actions = actList.next().iterator();
                 }

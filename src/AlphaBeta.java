@@ -27,12 +27,16 @@ public class AlphaBeta implements Search{
         int val;
         boolean terminal;
         Action action;
+        Action Best_act;
         public Ret( Action a,int v, boolean b)
         {val=v;terminal = b;action = a;}
         public void combine(Ret other, boolean maximizing)// this<other
         {
             if(maximizing==(this.val < other.val))
+            {
                 this.val = other.val;
+                Best_act = other.action;
+            }
             terminal &= other.terminal;
         }
         public void extract(Ret other, boolean maximizing)
@@ -46,7 +50,8 @@ public class AlphaBeta implements Search{
         }
         public String toString()
         {
-            return (action==null)?"Ret is null":"Ret :"+action.toString()+val;
+            String act = action == null? "null": action.toString();
+            return act + val + terminal;
         }
     }
 
@@ -61,21 +66,14 @@ public class AlphaBeta implements Search{
 
     public Action doSearch(State state, boolean is_white)
     {
-        Ret anchor = new Ret(null, start_alpha, true);
+        Ret anchor = null;
         int depth = 2;
-        Ret kek;
         start_time = System.currentTimeMillis();
         try
         {
             while(true)
             {
-                if(depth>6)
-                {
-                    break;
-                }
-                kek = rec_search(state, null, depth, start_alpha, start_beta, true);
-                System.out.println("got return from this depth:" + depth+ ". it's: "+kek.toString());
-                anchor.extract(kek, true);
+                anchor = rec_search(state, null, depth, start_alpha, start_beta, true);
                 if(anchor.terminal)//You've explored the howl search tree
                     break;
                 depth++;
@@ -90,11 +88,17 @@ public class AlphaBeta implements Search{
         {
             throw e;
         }
-        return anchor.action;
+        if(anchor == null)
+            return null;
+        else
+            return anchor.Best_act;
     }
 
     private Ret rec_search(State state, Action lastAction, int depth, int a, int b, boolean maximizing)
     {
+        if(state==null)
+            throw new NullPointerException("I can't have this");
+        //System.out.println(env.isTerminalState(state));
         boolean terminal = env.isTerminalState(state);
         if (depth == 0 || terminal)
         {
@@ -120,12 +124,10 @@ public class AlphaBeta implements Search{
             if(a>=b)
                 break;
         }
-        if(value == null)
-            System.out.println("GET THE FUCK OUT OF HERE");
         return value;
     }
     public static void main(String[] args){
-        Environment env = new Environment(3, 5);
+        Environment env = new Environment(4, 5);
         Search s = new AlphaBeta(env, new SimpleHeuristics(), 5000);
         long time = System.currentTimeMillis();
         Action ret = s.doSearch(env.getCurrentState(), true);
@@ -140,6 +142,8 @@ public class AlphaBeta implements Search{
             env.updateState(ret);
             ret = s.doSearch(env.getCurrentState(), true);
         }
+        System.out.println(env.getCurrentState().toString());
+        System.out.println(env.isTerminalState(env.getCurrentState()));
     }
 }
 
