@@ -45,7 +45,7 @@ public class BreakthroughAgent implements Agent{
         color = role.equals("white");
         myTurn = !color; // changed in nextAction before each search 
         this.env = new Environment(width, height);
-        searching = new MinMax(env, new SimpleHeuristics(), this.playclock);
+        searching = new AlphaBeta(env, new SimpleHeuristics(), this.playclock);
     }
 
     
