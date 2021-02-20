@@ -29,7 +29,7 @@ public class MinMax implements Search{
     Pruning pruning;
     long starting;
     Date clock = new Date();
-    long time_padding = 1000, start_time;
+    long time_padding = 100, start_time;
     int max_time;
     // For testing
     int expanded_states=0;
@@ -69,7 +69,7 @@ public class MinMax implements Search{
         Action action;
         Iterator<Action> moves = env.legalMoves(node.state, node.state.whites_turn);
         expanded_states++;
-        if (max_time-1<(System.currentTimeMillis()-start_time)/ 1000F) {
+        if (max_time-time_padding/1000F<(System.currentTimeMillis()-start_time)/ 1000F) {
             throw new RuntimeException("Out of time");
         }
         if ((env.isTerminalState(node.state)|(depth==0))){ //Don't go too deep
