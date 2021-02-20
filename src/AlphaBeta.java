@@ -1,21 +1,16 @@
 import support_classes.*;
-import java.util.Queue;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.lang.RuntimeException;
 
 public class AlphaBeta implements Search{
     private class Node
     {
         Action bestAction;
-        Node parent;
         State state;
         public Node(Node parent, State state)
         {
             this.bestAction = null;
-            this.parent = parent;
             this.state = state;
         }
         public void UpdateBestAction(Action a){
@@ -36,6 +31,9 @@ public class AlphaBeta implements Search{
     Date clock = new Date();
     long time_padding = 1000, start_time;
     int max_time;
+    // For testing
+    int expanded_states=0;
+    long test_time;
 
     public AlphaBeta(Environment env, Heuristic heuristic, int max_time)
     {
@@ -51,11 +49,16 @@ public class AlphaBeta implements Search{
         Node root = new Node(null, state);
         int depth = 1;
         while(true){
+            test_time= System.currentTimeMillis();
             try{
                 alphaBeta(root, depth, -Integer.MAX_VALUE, Integer.MAX_VALUE);
             } catch(RuntimeException e) {
                 break;
             }
+            System.out.println("Depth: "+ depth);
+            System.out.println("Expanded states: "+ expanded_states);
+            System.out.println("Time :"+ (System.currentTimeMillis()-test_time)+"ms.");
+            expanded_states=0;
             depth++;
         }
         return root.bestAction;
@@ -66,6 +69,7 @@ public class AlphaBeta implements Search{
         Node child;
         Action action;
         Iterator<Action> moves = env.legalMoves(node.state, node.state.whites_turn);
+        expanded_states++;
         if (max_time-1<(System.currentTimeMillis()-start_time)/ 1000F) {
             throw new RuntimeException("Out of time");
         }
@@ -107,6 +111,7 @@ public class AlphaBeta implements Search{
     }
 
     public static void main(String[] args){
+
         Environment env = new Environment(3, 5);
         Search s = new AlphaBeta(env, new SimpleHeuristics(), 5);
         long time = System.currentTimeMillis();

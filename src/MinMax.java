@@ -1,21 +1,16 @@
 import support_classes.*;
-import java.util.Queue;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.lang.RuntimeException;
 
 public class MinMax implements Search{
     private class Node
     {
         Action bestAction;
-        Node parent;
         State state;
         public Node(Node parent, State state)
         {
             this.bestAction = null;
-            this.parent = parent;
             this.state = state;
         }
         public void UpdateBestAction(Action a){
@@ -36,7 +31,9 @@ public class MinMax implements Search{
     Date clock = new Date();
     long time_padding = 1000, start_time;
     int max_time;
-    Queue<MinMax.Node> frontier = new LinkedList<MinMax.Node>();
+    // For testing
+    int expanded_states=0;
+    long test_time;
     public MinMax(Environment env, Heuristic heuristic, int max_time)
     {
         this.env = env;
@@ -51,11 +48,16 @@ public class MinMax implements Search{
         Node root = new Node(null, state);
         int depth = 1;
         while(true){
+            test_time= System.currentTimeMillis();
             try{
                 minmax(root, depth);
             } catch(RuntimeException e) {
                 break;
             }
+            System.out.println("Depth: "+ depth);
+            System.out.println("Expanded states: "+ expanded_states);
+            System.out.println("Time :"+ (System.currentTimeMillis()-test_time)+"ms.");
+            expanded_states=0;
             depth++;
         }
         return root.bestAction;
@@ -66,6 +68,7 @@ public class MinMax implements Search{
         Node child;
         Action action;
         Iterator<Action> moves = env.legalMoves(node.state, node.state.whites_turn);
+        expanded_states++;
         if (max_time-1<(System.currentTimeMillis()-start_time)/ 1000F) {
             throw new RuntimeException("Out of time");
         }
