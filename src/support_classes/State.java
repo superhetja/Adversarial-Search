@@ -103,7 +103,7 @@ public class State implements Cloneable {
                     //if it is behind in same color then he can move forward and if is in front and not same color then he can also move forward
                     if(x == 0 && ((y == (pawn_shift*-1)) && (p.is_white? checkWhite(p.x+x, p.y+y): checkBlack(p.x+x, p.y+y)) || ((y == pawn_shift) && (p.is_white? checkBlack(p.x+x, p.y+y) : checkWhite(p.x+x, p.y+y)) ) ) ) {
 
-                        System.out.println("Adding action: " + new Action(p.x+x, p.y+y, p.x, p.y));
+                        //System.out.println("Adding action: " + new Action(p.x+x, p.y+y, p.x, p.y));
                         tmp_action.add(new Action(p.x+x, p.y+y, p.x, p.y));
                     }
                     else if (x != 0 && y != 0 && (p.is_white? checkBlack(p.x+x, p.y+y): checkWhite(p.x+x, p.y+y))) {
@@ -111,7 +111,7 @@ public class State implements Cloneable {
                         while(itr.hasNext()) {
                             Action move = itr.next();
                             if(move.x2 == p.x && move.y2 == p.y && (move.isDiagonalLeft() || move.isDiagonalRight() )) {
-                                System.out.println("Removing action: " + move);
+                                //System.out.println("Removing action: " + move);
                                 itr.remove();
                             }
 
@@ -145,7 +145,7 @@ public class State implements Cloneable {
                     // x needs to be 0 and y needs to be 1 for white -1 for black
                     // it that is empty then we can add it to the list
                     if(x == 0 && y == pawn_shift) {
-                        System.out.println("Adding action" +  new Action(p.x, p.y, p.x, p.y+pawn_shift));
+                        //System.out.println("Adding action" +  new Action(p.x, p.y, p.x, p.y+pawn_shift));
                         a.add(new Action(p.x, p.y, p.x, p.y+pawn_shift));
                     }
                 } else {
@@ -158,15 +158,15 @@ public class State implements Cloneable {
                             // i thing all of the condition except for y2 == y will always be true..
                             Action move = ji.next();
                             if(move.isForwardMove() && move.x2 == p.x && move.y2 == p.y) {
-                                System.out.println("Removing action: " + move);
+                                //System.out.println("Removing action: " + move);
                                 ji.remove();
                             }
                         }
                     } else if ( (y == pawn_shift) && (p.is_white? checkBlack(p.x+x, p.y+y): checkWhite(p.x+x, p.y+y)) ) {
                         // if not in same row, and is in front of me and is not in my team  then add move to me and that pawn
-                        System.out.println("Adding action" +  new Action(p.x,p.y, p.x+x, p.y+y));
+                        //System.out.println("Adding action" +  new Action(p.x,p.y, p.x+x, p.y+y));
                         a.add(new Action(p.x,p.y, p.x+x, p.y+y));
-                        System.out.println("Adding action" + new Action(p.x+x, p.y+y, p.x, p.y));
+                        //System.out.println("Adding action" + new Action(p.x+x, p.y+y, p.x, p.y));
                         tmp_action.add(new Action(p.x+x, p.y+y, p.x, p.y));
 
                     }

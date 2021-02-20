@@ -5,13 +5,22 @@ import java.util.Date;
 import java.time.Clock;
 
 public class AlphaBeta implements Search{
+    //constants
     private int start_alpha;//Negative Infinity
     private int start_beta;//Infinity
+    //support objects
     private Environment env;
     private Heuristic heuristic;
+    //time based parameters
     private long max_time;
     private long start_time;
     private long padding = 1000;
+
+    private class OutOfTimeException extends RuntimeException
+    {
+        public OutOfTimeException(String kek)
+        {super(kek);}
+    }
 
     private class Ret
     {
@@ -20,12 +29,24 @@ public class AlphaBeta implements Search{
         Action action;
         public Ret( Action a,int v, boolean b)
         {val=v;terminal = b;action = a;}
-        public Ret combine(Ret other, boolean maximizing)
+        public void combine(Ret other, boolean maximizing)// this<other
         {
-            if((val<other.val))
-                return new Ret(action, val, terminal&&other.terminal);
-            else
-                return new Ret(other.action, other.val, terminal&&other.terminal);
+            if(maximizing==(this.val < other.val))
+                this.val = other.val;
+            terminal &= other.terminal;
+        }
+        public void extract(Ret other, boolean maximizing)
+        {
+            if(maximizing==(this.val < other.val))
+            {
+                this.val = other.val;
+                this.action = other.action;
+            }
+            terminal &= other.terminal;
+        }
+        public String toString()
+        {
+            return (action==null)?"Ret is null":"Ret :"+action.toString()+val;
         }
     }
 
@@ -41,35 +62,43 @@ public class AlphaBeta implements Search{
     public Action doSearch(State state, boolean is_white)
     {
         Ret anchor = new Ret(null, start_alpha, true);
-        Ret ret;
         int depth = 2;
+        Ret kek;
         start_time = System.currentTimeMillis();
         try
         {
             while(true)
             {
-                ret = rec_search(state, null, depth, start_alpha, start_beta, true);
-                if(ret.terminal)//You've explored the howl search tree
+                if(depth>6)
                 {
-                    return ret.action;
+                    break;
                 }
-                anchor = anchor.combine(ret, true);
+                kek = rec_search(state, null, depth, start_alpha, start_beta, true);
+                System.out.println("got return from this depth:" + depth+ ". it's: "+kek.toString());
+                anchor.extract(kek, true);
+                if(anchor.terminal)//You've explored the howl search tree
+                    break;
                 depth++;
-                System.out.println(ret.action + " : " + ret.val);
             }
         }
-        catch (RuntimeException e)
+        catch (OutOfTimeException e)
+        {
+            System.out.println("out of time");
+            //throw e;
+        }
+        catch (Exception e)
         {
             throw e;
         }
-        //return anchor.action;
+        return anchor.action;
     }
 
     private Ret rec_search(State state, Action lastAction, int depth, int a, int b, boolean maximizing)
     {
-        if (depth == 0 || env.isTerminalState(state))
+        boolean terminal = env.isTerminalState(state);
+        if (depth == 0 || terminal)
         {
-            return new Ret(lastAction, heuristic.eval(state),true);
+            return new Ret(lastAction, heuristic.eval(state),terminal);
         }
         Ret value = new Ret(lastAction, maximizing?start_alpha:start_beta, true);
         Iterator<Action> actions = env.legalMoves(state, state.whites_turn);
@@ -79,11 +108,11 @@ public class AlphaBeta implements Search{
         {
             if(max_time-padding<now-start_time)
             {
-                throw new RuntimeException("out of time");
+                throw new OutOfTimeException("out of time");
             }
                 
             act = actions.next();
-            value = value.combine(rec_search(env.getNextState(state,act), act ,depth-1, a, b, !maximizing), maximizing);
+            value.combine(rec_search(env.getNextState(state,act), act ,depth-1, a, b, !maximizing), maximizing);
             if(maximizing)
                 a = value.val;
             else
@@ -91,38 +120,26 @@ public class AlphaBeta implements Search{
             if(a>=b)
                 break;
         }
+        if(value == null)
+            System.out.println("GET THE FUCK OUT OF HERE");
         return value;
     }
     public static void main(String[] args){
-        Environment env = new Environment(4, 4);
-        Search s = new AlphaBeta(env, new SimpleHeuristics(), (long)~(1<<63));
-        Action ret = s.doSearch(env.getCurrentState(), false);
-        System.out.println("this thing: "+ret);
-        
+        Environment env = new Environment(3, 5);
+        Search s = new AlphaBeta(env, new SimpleHeuristics(), 5000);
+        long time = System.currentTimeMillis();
+        Action ret = s.doSearch(env.getCurrentState(), true);
+        if (ret == null)
+        {
+            System.out.println("fuck");
+            return;
+        }
+        while (!env.isTerminalState(env.getCurrentState())){
+            System.out.println(env.getCurrentState().toString());
+            System.out.println("Best Action: "+ret);
+            env.updateState(ret);
+            ret = s.doSearch(env.getCurrentState(), true);
+        }
     }
 }
 
-
-/*
-public class AlphaBeta implements Pruning{
-    private int start_alpha;//Negative Infinity
-    private int start_beta;//Infinity
-    private Environment env;
-
-    public  AlphaBeta(Environment env, Heuristic heuristic) {
-        this.env = env;
-        this.heuristic = heuristic;
-    }
-    public void init(Environment env)
-    {
-        this.env = env;
-        start_alpha = 1<<31;//Negative Infinity
-        start_beta = ~start_alpha;//Infinity
-    }
-    public boolean cut_off();
-    public Pruning passing();
-    public void backing();
-    
-}
-
-*/
