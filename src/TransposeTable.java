@@ -13,9 +13,9 @@ public class TransposeTable {
     public void storeState(State state){
         // Hashes two halves of a state and stores it as
         // (k,v) in HashMap bucket.
-        int key = state.blackPawns.hashCode();
+        int key = state.blackMap.hashCode();
 
-        int value = state.whitePawns.hashCode();
+        int value = state.whiteMap.hashCode();
 
         statesBucket.put(key, value);
 
@@ -24,25 +24,15 @@ public class TransposeTable {
 
     public boolean containsState(State state){
         // returns true/false if state is in collection
-        int key = state.blackPawns.hashCode();
-        int value = state.whitePawns.hashCode();
+        int key = state.blackMap.hashCode();
+        int value = state.whiteMap.hashCode();
         if (statesBucket.get(key) == null) return false;  // key not found
         if (statesBucket.get(key) == value) return true;  // k/v pair matches
         
         // will have to account for collisions later
         System.out.println("Collision!");
-        return false;  // key/value pair doesn't match. Collision?
+        return false;  // key found, but value does not match. Collision?
     }
-
-    /*
-    Not needed anymore
-    public static int makeHashIndex(int hash){
-        //creates a hash bucket index [0..13]
-        hash = hash % 13;
-        return hash;
-    }
-    */
-
 
     public static void main(String[] args){
         
@@ -52,6 +42,7 @@ public class TransposeTable {
         stateTable.storeState(newState);
         System.out.println(stateTable.containsState(newState));  // must return true
         System.out.println(stateTable.containsState(otherState));  // must return false
+        // I'm just making this comment to step on Siggi's lawn.
 
     }
     
