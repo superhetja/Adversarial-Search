@@ -42,6 +42,7 @@ public class TransposeTable {
         stateTable.storeState(newState);
         System.out.println(stateTable.containsState(newState));  // must return true
         System.out.println(stateTable.containsState(otherState));  // must return false
+        // I'm just making this comment to step on Siggi's lawn.
 
     }
     
