@@ -3,7 +3,9 @@ import support_classes.*;
 public interface Search {
     //public void init(Environment env, Heuristic heuristic, Pruning pruning);
     public Action doSearch(State state, boolean is_white);
-    public void getInfo();
+    public void PrintInfo();
+    public int getMaxDeapt();
+    public int getExpandedStates();
 /*    Environment env;
     String color;
 

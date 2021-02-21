@@ -3,6 +3,10 @@ import support_classes.*;
 public class BreakthroughAgent implements Agent{
 
     /**
+     * Varialbles for expiriments
+     */
+    private int ex_state_sum=0, move_co=0, max_depth_sum=0;
+    /**
      * Time in secound we have for each move.
      */
     private int playclock;
@@ -54,7 +58,11 @@ public class BreakthroughAgent implements Agent{
      * @param   lastMove    int list containing last move (x1 y1 x2 y2)
      */
     public String nextAction(int[] lastMove) {
-        searching.getInfo();
+        ex_state_sum+=searching.getExpandedStates();
+        max_depth_sum+= searching.getMaxDeapt();
+        move_co++;
+        System.out.println("Average max deapth: "+max_depth_sum/move_co);
+        System.out.println("Average state expansions: "+ex_state_sum/move_co);
         /* the first time the agent is called last move is null */
         if (lastMove != null) {
             Action lastAction = new Action(lastMove);

@@ -2,6 +2,7 @@ import support_classes.*;
 import java.util.Date;
 import java.util.Iterator;
 import java.lang.RuntimeException;
+import java.security.PublicKey;
 
 public class AlphaBeta implements Search{
     private class Node
@@ -65,9 +66,15 @@ public class AlphaBeta implements Search{
         return root.bestAction;
         
     }
-    public void getInfo() {
+    public void PrintInfo() {
         System.out.println("MAX DEAPTH: "+max_depth);
         System.out.println("STATE EXPANSIONS: "+ expanded_states);
+    }
+    public int getMaxDeapt() {
+        return max_depth;
+    }
+    public int getExpandedStates() {
+        return expanded_states;
     }
     private int alphaBeta(Node node, int depth, int alpha, int beta) {
         int value, tmpval;
