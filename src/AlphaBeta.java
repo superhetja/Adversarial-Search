@@ -14,7 +14,7 @@ public class AlphaBeta implements Search{
     //time based parameters
     private long max_time;
     private long start_time;
-    private long padding = 1000;
+    private long padding = 500;
 
     private class OutOfTimeException extends RuntimeException
     {
@@ -39,20 +39,6 @@ public class AlphaBeta implements Search{
             }
             terminal &= other.terminal;
         }
-        public void extract(Ret other, boolean maximizing)
-        {
-            if(maximizing==(this.val < other.val))
-            {
-                this.val = other.val;
-                this.action = other.action;
-            }
-            terminal &= other.terminal;
-        }
-        public String toString()
-        {
-            String act = action == null? "null": action.toString();
-            return act + val + terminal;
-        }
     }
 
     public  AlphaBeta(Environment env, Heuristic heuristic, long max_time) {
@@ -61,7 +47,7 @@ public class AlphaBeta implements Search{
         this.heuristic.init(env);
         start_alpha = 1<<31;
         start_beta = ~start_alpha;
-        this.max_time = max_time;
+        this.max_time = max_time*1000;
     }
 
     public Action doSearch(State state, boolean is_white)
@@ -82,16 +68,14 @@ public class AlphaBeta implements Search{
         catch (OutOfTimeException e)
         {
             System.out.println("out of time");
-            //throw e;
+            if(anchor == null)
+                throw e;
         }
         catch (Exception e)
         {
             throw e;
         }
-        if(anchor == null)
-            return null;
-        else
-            return anchor.Best_act;
+        return anchor.Best_act;
     }
 
     private Ret rec_search(State state, Action lastAction, int depth, int a, int b, boolean maximizing)
@@ -127,7 +111,7 @@ public class AlphaBeta implements Search{
         return value;
     }
     public static void main(String[] args){
-        Environment env = new Environment(4, 5);
+        Environment env = new Environment(3, 5);
         Search s = new AlphaBeta(env, new SimpleHeuristics(), 5000);
         long time = System.currentTimeMillis();
         Action ret = s.doSearch(env.getCurrentState(), true);
