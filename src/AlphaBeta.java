@@ -1,7 +1,10 @@
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import support_classes.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.time.Clock;
 
 public class AlphaBeta implements Search{
@@ -15,6 +18,9 @@ public class AlphaBeta implements Search{
     private long max_time;
     private long start_time;
     private long padding = 500;
+
+    //counters
+    int expanded = 0;
 
     private class OutOfTimeException extends RuntimeException
     {
@@ -39,6 +45,10 @@ public class AlphaBeta implements Search{
             }
             terminal &= other.terminal;
         }
+        public String toString()
+        {
+            return "Ret: "+Best_act.toString()+", val: "+val+", terminal: "+terminal;
+        }
     }
 
     public  AlphaBeta(Environment env, Heuristic heuristic, long max_time) {
@@ -52,14 +62,17 @@ public class AlphaBeta implements Search{
 
     public Action doSearch(State state, boolean is_white)
     {
+        expanded = 0;
         Ret anchor = null;
         int depth = 2;
+        List rets = new LinkedList<String>();
         start_time = System.currentTimeMillis();
         try
         {
             while(true)
             {
                 anchor = rec_search(state, null, depth, start_alpha, start_beta, true);
+                rets.add(anchor.toString());
                 if(anchor.terminal)//You've explored the howl search tree
                     break;
                 depth++;
@@ -75,6 +88,8 @@ public class AlphaBeta implements Search{
         {
             throw e;
         }
+        System.out.println(rets);
+        System.out.println("maximum depth searched: "+depth + ", and expanded: "+expanded+" expected outcome: "+anchor.val+ " for action: "+anchor.Best_act);
         return anchor.Best_act;
     }
 
@@ -88,7 +103,7 @@ public class AlphaBeta implements Search{
         {
             return new Ret(lastAction, heuristic.eval(state),terminal);
         }
-        Ret value = new Ret(lastAction, maximizing?start_alpha:start_beta, true);
+        Ret value = new Ret(lastAction, maximizing?start_alpha+1:start_beta-1, true);
         Iterator<Action> actions = env.legalMoves(state, state.whites_turn);
         Action act;
         long now = System.currentTimeMillis();
@@ -98,7 +113,7 @@ public class AlphaBeta implements Search{
             {
                 throw new OutOfTimeException("out of time");
             }
-                
+            expanded++;
             act = actions.next();
             value.combine(rec_search(env.getNextState(state,act), act ,depth-1, a, b, !maximizing), maximizing);
             if(maximizing)
