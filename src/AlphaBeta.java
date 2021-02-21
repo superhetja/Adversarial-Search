@@ -14,7 +14,7 @@ public class AlphaBeta implements Search{
     //time based parameters
     private long max_time;
     private long start_time;
-    private long padding = 1000;
+    private long padding = 500;
 
     private class OutOfTimeException extends RuntimeException
     {
@@ -27,26 +27,17 @@ public class AlphaBeta implements Search{
         int val;
         boolean terminal;
         Action action;
+        Action Best_act;
         public Ret( Action a,int v, boolean b)
         {val=v;terminal = b;action = a;}
         public void combine(Ret other, boolean maximizing)// this<other
         {
             if(maximizing==(this.val < other.val))
-                this.val = other.val;
-            terminal &= other.terminal;
-        }
-        public void extract(Ret other, boolean maximizing)
-        {
-            if(maximizing==(this.val < other.val))
             {
                 this.val = other.val;
-                this.action = other.action;
+                Best_act = other.action;
             }
             terminal &= other.terminal;
-        }
-        public String toString()
-        {
-            return (action==null)?"Ret is null":"Ret :"+action.toString()+val;
         }
     }
 
@@ -56,26 +47,19 @@ public class AlphaBeta implements Search{
         this.heuristic.init(env);
         start_alpha = 1<<31;
         start_beta = ~start_alpha;
-        this.max_time = max_time;
+        this.max_time = max_time*1000;
     }
 
     public Action doSearch(State state, boolean is_white)
     {
-        Ret anchor = new Ret(null, start_alpha, true);
+        Ret anchor = null;
         int depth = 2;
-        Ret kek;
         start_time = System.currentTimeMillis();
         try
         {
             while(true)
             {
-                if(depth>6)
-                {
-                    break;
-                }
-                kek = rec_search(state, null, depth, start_alpha, start_beta, true);
-                System.out.println("got return from this depth:" + depth+ ". it's: "+kek.toString());
-                anchor.extract(kek, true);
+                anchor = rec_search(state, null, depth, start_alpha, start_beta, true);
                 if(anchor.terminal)//You've explored the howl search tree
                     break;
                 depth++;
@@ -84,17 +68,21 @@ public class AlphaBeta implements Search{
         catch (OutOfTimeException e)
         {
             System.out.println("out of time");
-            //throw e;
+            if(anchor == null)
+                throw e;
         }
         catch (Exception e)
         {
             throw e;
         }
-        return anchor.action;
+        return anchor.Best_act;
     }
 
     private Ret rec_search(State state, Action lastAction, int depth, int a, int b, boolean maximizing)
     {
+        if(state==null)
+            throw new NullPointerException("I can't have this");
+        //System.out.println(env.isTerminalState(state));
         boolean terminal = env.isTerminalState(state);
         if (depth == 0 || terminal)
         {
@@ -120,8 +108,6 @@ public class AlphaBeta implements Search{
             if(a>=b)
                 break;
         }
-        if(value == null)
-            System.out.println("GET THE FUCK OUT OF HERE");
         return value;
     }
     public static void main(String[] args){
@@ -140,6 +126,8 @@ public class AlphaBeta implements Search{
             env.updateState(ret);
             ret = s.doSearch(env.getCurrentState(), true);
         }
+        System.out.println(env.getCurrentState().toString());
+        System.out.println(env.isTerminalState(env.getCurrentState()));
     }
 }
 

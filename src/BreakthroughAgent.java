@@ -45,7 +45,7 @@ public class BreakthroughAgent implements Agent{
         color = role.equals("white");
         myTurn = !color; // changed in nextAction before each search 
         this.env = new Environment(width, height);
-        searching = new MinMax(env, new SimpleHeuristics(), this.playclock);
+        searching = new AlphaBeta(env, new SimpleHeuristics(), this.playclock);
     }
 
     
@@ -58,13 +58,15 @@ public class BreakthroughAgent implements Agent{
         /* the first time the agent is called last move is null */
         if (lastMove != null) {
             Action lastAction = new Action(lastMove);
+            System.out.println("he did: "+lastAction);
             env.updateState(lastAction);
         }
         /* determine if it is our move or theirs */
         myTurn = !myTurn;
         if ( !myTurn ) { return "noob"; }
-        return searching.doSearch(env.getCurrentState(), color).toString(); // Returns a Action ("(move " + x1 + " " + y1 + " " + x2 + " " + y2 + ")")
-
+        String ret = searching.doSearch(env.getCurrentState(), color).toString(); // Returns a Action ("(move " + x1 + " " + y1 + " " + x2 + " " + y2 + ")")
+        System.out.println("we are doing: "+ret);
+        return ret;
     }
 
     
