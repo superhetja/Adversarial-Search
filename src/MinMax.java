@@ -32,8 +32,7 @@ public class MinMax implements Search{
     long time_padding = 100, start_time;
     int max_time;
     // For testing
-    int expanded_states=0;
-    int depest_search=0;
+    int expanded_states=0, max_depth=0;
     long test_time;
     public MinMax(Environment env, Heuristic heuristic, int max_time)
     {
@@ -55,14 +54,25 @@ public class MinMax implements Search{
             } catch(RuntimeException e) {
                 break;
             }
-            System.out.println("Depth: "+ depth);
-            System.out.println("Expanded states: "+ expanded_states);
-            System.out.println("Time :"+ (System.currentTimeMillis()-test_time)+"ms.");
+            // System.out.println("Depth: "+ depth);
+            // System.out.println("Expanded states: "+ expanded_states);
+            // System.out.println("Time :"+ (System.currentTimeMillis()-test_time)+"ms.");
             expanded_states=0;
             depth++;
         }
+        max_depth=depth;
         return root.bestAction;
         
+    }
+    public void PrintInfo() {
+        System.out.println("MAX DEAPTH: "+max_depth);
+        System.out.println("STATE EXPANSIONS: "+ expanded_states);
+    }
+    public int getMaxDeapt() {
+        return max_depth;
+    }
+    public int getExpandedStates() {
+        return expanded_states;
     }
     private int minmax(Node node, int depth) {
         int value, tmpval;
