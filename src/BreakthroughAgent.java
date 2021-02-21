@@ -54,7 +54,7 @@ public class BreakthroughAgent implements Agent{
      * @param   lastMove    int list containing last move (x1 y1 x2 y2)
      */
     public String nextAction(int[] lastMove) {
-
+        searching.getInfo();
         /* the first time the agent is called last move is null */
         if (lastMove != null) {
             Action lastAction = new Action(lastMove);

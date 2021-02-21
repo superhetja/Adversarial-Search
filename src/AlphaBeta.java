@@ -32,7 +32,7 @@ public class AlphaBeta implements Search{
     long time_padding = 100, start_time;
     int max_time;
     // For testing
-    int expanded_states=0;
+    int expanded_states=0, max_depth=0;
     long test_time;
 
     public AlphaBeta(Environment env, Heuristic heuristic, int max_time)
@@ -61,8 +61,13 @@ public class AlphaBeta implements Search{
             expanded_states=0;
             depth++;
         }
+        max_depth=depth;
         return root.bestAction;
         
+    }
+    public void getInfo() {
+        System.out.println("MAX DEAPTH: "+max_depth);
+        System.out.println("STATE EXPANSIONS: "+ expanded_states);
     }
     private int alphaBeta(Node node, int depth, int alpha, int beta) {
         int value, tmpval;

@@ -33,6 +33,7 @@ public class MinMax implements Search{
     int max_time;
     // For testing
     int expanded_states=0;
+    int depest_search=0;
     long test_time;
     public MinMax(Environment env, Heuristic heuristic, int max_time)
     {
